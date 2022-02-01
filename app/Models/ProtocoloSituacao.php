@@ -15,6 +15,6 @@ class ProtocoloSituacao extends Model
 
     public function protocolos()
     {
-        return $this->hasMany('App\Protocolo');
+        return $this->hasMany(Protocolo::class');
     }    
 }

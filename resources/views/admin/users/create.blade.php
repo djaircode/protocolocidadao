@@ -34,6 +34,31 @@
     </div>
     <div class="form-row">
       <div class="form-group col-md-6">
+        <label for="matricula">Matrícula do Funcionário</label>
+        <input type="text" class="form-control{{ $errors->has('matricula') ? ' is-invalid' : '' }}" name="matricula" value="{{ old('matricula') ?? '' }}">
+        @if ($errors->has('matricula'))
+        <div class="invalid-feedback">
+        {{ $errors->first('matricula') }}
+        </div>
+        @endif
+      </div>  
+      <div class="form-group col-md-6">
+        <label for="setor_id">Setor do Funcionário</label>
+        <select class="form-control {{ $errors->has('setor_id') ? ' is-invalid' : '' }}" name="setor_id" id="setor_id">
+          <option value="" selected="true">Selecione ...</option>        
+          @foreach($setores as $setor)
+          <option value="{{$setor->id}}">{{$setor->descricao}}</option>
+          @endforeach
+        </select>
+        @if ($errors->has('setor_id'))
+        <div class="invalid-feedback">
+        {{ $errors->first('setor_id') }}
+        </div>
+        @endif
+      </div>  
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
         <label for="password">Senha</label>
         <input type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password">
         @if ($errors->has('password'))
@@ -75,7 +100,7 @@
 </div>
 <div class="container">
   <div class="float-right">
-    <a href="{{ route('users.index') }}" class="btn btn-secondary btn-sm" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</i></a>
+    <a href="{{ route('users.index') }}" class="btn btn-secondary btn-sm" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a>
   </div>
 </div>
 @endsection

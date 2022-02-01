@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\ProtocoloTipo;
-use App\Perpage;
+use App\Models\ProtocoloTipo;
+use App\Models\Perpage;
 
 use Response;
 
@@ -41,7 +41,29 @@ class ProtocoloTipoController extends Controller
      */
     public function index()
     {
-        //
+        if (Gate::denies('protocolotipo-index')) {
+            abort(403, 'Acesso negado.');
+        }
+
+        $protocolotipos = new ProtocoloTipo;
+
+        // ordena
+        $protocolotipos = $protocolotipos->orderBy('descricao', 'asc');
+
+        // se a requisição tiver um novo valor para a quantidade
+        // de páginas por visualização ele altera aqui
+        if(request()->has('perpage')) {
+            session(['perPage' => request('perpage')]);
+        }
+
+        // consulta a tabela perpage para ter a lista de
+        // quantidades de paginação
+        $perpages = Perpage::orderBy('valor')->get();
+
+        // paginação
+        $protocolotipos = $protocolotipos->paginate(session('perPage', '5'));
+
+        return view('protocolotipos.index', compact('protocolotipos', 'perpages'));
     }
 
     /**
@@ -51,7 +73,10 @@ class ProtocoloTipoController extends Controller
      */
     public function create()
     {
-        //
+        if (Gate::denies('protocolotipo-create')) {
+            abort(403, 'Acesso negado.');
+        }        
+        return view('protocolotipos.create');
     }
 
     /**
@@ -62,7 +87,17 @@ class ProtocoloTipoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+          'descricao' => 'required',
+        ]);
+
+        $ProtocoloTipo = $request->all();
+
+        ProtocoloTipo::create($ProtocoloTipo); //salva
+
+        Session::flash('create_protocolotipo', 'Tipo de protocolo cadastrado com sucesso!');
+
+        return redirect(route('protocolotipos.index'));   
     }
 
     /**
@@ -73,7 +108,13 @@ class ProtocoloTipoController extends Controller
      */
     public function show($id)
     {
-        //
+        if (Gate::denies('protocolotipo-show')) {
+            abort(403, 'Acesso negado.');
+        }
+
+        $protocolotipos = ProtocoloTipo::findOrFail($id);
+
+        return view('protocolotipos.show', compact('protocolotipos'));
     }
 
     /**
@@ -84,7 +125,13 @@ class ProtocoloTipoController extends Controller
      */
     public function edit($id)
     {
-        //
+        if (Gate::denies('protocolotipo-edit')) {
+            abort(403, 'Acesso negado.');
+        }
+
+        $protocolotipo = ProtocoloTipo::findOrFail($id);
+
+        return view('protocolotipos.edit', compact('protocolotipo'));
     }
 
     /**
@@ -96,7 +143,17 @@ class ProtocoloTipoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+          'descricao' => 'required',
+        ]);
+
+        $protocolotipo = ProtocoloTipo::findOrFail($id);
+            
+        $protocolotipo->update($request->all());
+        
+        Session::flash('edited_protocolotipo', 'Tipo de protocolo alterado com sucesso!');
+
+        return redirect(route('protocolotipos.edit', $id));
     }
 
     /**
@@ -107,6 +164,98 @@ class ProtocoloTipoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (Gate::denies('protocolotipo-delete')) {
+            abort(403, 'Acesso negado.');
+        }
+
+        ProtocoloTipo::findOrFail($id)->delete();
+
+        Session::flash('deleted_protocolotipo', 'Tipo de protocolo excluído com sucesso!');
+
+        return redirect(route('protocolotipos.index'));
     }
+
+    /**
+     * Exportação para planilha (csv)
+     *
+     * @param  int  $id
+     * @return Response::stream()
+     */
+    public function exportcsv()
+    {
+        if (Gate::denies('protocolotipo-export')) {
+            abort(403, 'Acesso negado.');
+        }
+
+       $headers = [
+                'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0'
+            ,   'Content-type'        => 'text/csv; charset=UTF-8'
+            ,   'Content-Disposition' => 'attachment; filename=TiposProtocolo_' .  date("Y-m-d H:i:s") . '.csv'
+            ,   'Expires'             => '0'
+            ,   'Pragma'              => 'public'
+        ];
+
+        $protocolotipos = DB::table('protocolo_tipos');
+
+        $protocolotipos = $protocolotipos->select('descricao');
+
+        $protocolotipos = $protocolotipos->orderBy('descricao', 'asc');
+
+        $list = $protocolotipos->get()->toArray();
+
+        # converte os objetos para uma array
+        $list = json_decode(json_encode($list), true);
+
+        # add headers for each column in the CSV download
+        array_unshift($list, array_keys($list[0]));
+
+       $callback = function() use ($list)
+        {
+            $FH = fopen('php://output', 'w');
+            fputs($FH, $bom = ( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+            foreach ($list as $row) {
+                fputcsv($FH, $row, chr(59));
+            }
+            fclose($FH);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    } 
+
+    /**
+     * Exportação para pdf
+     *
+     * @param  
+     * @return 
+     */
+    public function exportpdf()
+    {
+        if (Gate::denies('protocolotipo-export')) {
+            abort(403, 'Acesso negado.');
+        }
+
+        $this->pdf->AliasNbPages();   
+        $this->pdf->SetMargins(12, 10, 12);
+        $this->pdf->SetFont('Arial', '', 12);
+        $this->pdf->AddPage();
+
+        $protocolotipos = DB::table('protocolo_tipos');
+
+        $protocolotipos = $protocolotipos->select('descricao');
+
+
+        $protocolotipos = $protocolotipos->orderBy('descricao', 'asc');    
+
+
+        $protocolotipos = $protocolotipos->get();
+
+        foreach ($protocolotipos as $protocolotipo) {
+            $this->pdf->Cell(186, 6, utf8_decode($protocolotipo->descricao), 0, 0,'L');
+            $this->pdf->Ln();
+        }
+
+        $this->pdf->Output('D', 'ProtocoloTipos_' .  date("Y-m-d H:i:s") . '.pdf', true);
+        exit;
+
+    }     
 }

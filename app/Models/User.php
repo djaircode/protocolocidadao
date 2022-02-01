@@ -22,6 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'active',
+        'setor_id',
+        'matricula'
     ];
 
     /**
@@ -94,7 +96,7 @@ class User extends Authenticatable
      */
     public function setor()
     {
-        return $this->belongsTo('App\Setor');
+        return $this->belongsTo(Setor::class);
     }
     
     /**
@@ -102,19 +104,32 @@ class User extends Authenticatable
      *
      * @var Bool
      */
-    public function protocolos()
+    public function protocolos_user()
     {
-        return $this->hasMany('App\Protocolo');
-    } 
-
-    public function anexos_propriedade()
-    {
-        return $this->hasMany('App\Anexo', 'user_id');
+        return $this->hasMany(Protocolo::class, 'user_id');
     }
 
-    // pode dar problema com de cima
+    /**
+     * Cada protocolo deverá ser relacionado a um funcionário, que o abriu
+     *
+     * @var Bool
+     */
+    public function anexos_user()
+    {
+        return $this->hasMany(Anexo::class, 'user_id');
+    }
+
+    // Tabela de acesso aos anexos por usuario
+    // relação many-to-many
     public function anexos()
     {
         return $this->belongsToMany(Anexo::class);
-    }     
+    }
+
+    // Tabela de acesso aos protocolos por usuario
+    // relação many-to-many
+    public function protocolos()
+    {
+        return $this->belongsToMany(Protocolo::class);
+    }  
 }

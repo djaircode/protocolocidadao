@@ -2,10 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProtocoloTramitacao;
+use App\\Models\Protocolo;
+
+use App\\Models\Perpage;
+
+use Response;
+
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Redirect; // para poder usar o redirect
+
+use Illuminate\Support\Facades\DB;
+
+use Illuminate\Database\Eloquent\Builder; // para poder usar o whereHas nos filtros
+
+use Auth; // receber o id do operador logado no sistema
+
+use Carbon\Carbon; // tratamento de datas
 
 class TramitacaoController extends Controller
 {
+    protected $pdf;
+
+    /**
+     * Construtor.
+     *
+     * precisa estar logado ao sistema
+     * precisa ter a conta ativa (access)
+     *
+     * @return 
+     */
+    public function __construct(\App\Reports\TemplateReport $pdf)
+    {
+        $this->middleware(['middleware' => 'auth']);
+        $this->middleware(['middleware' => 'hasaccess']);
+
+        $this->pdf = $pdf;
+    }
+
     /**
      * Display a listing of the resource.
      *

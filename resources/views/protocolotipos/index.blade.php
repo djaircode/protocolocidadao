@@ -4,69 +4,62 @@
 <div class="container-fluid">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('users.index') }}">Lista de Operadores</a></li>
+      <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('protocolotipos.index') }}">Lista de Tipos de Protocolo</a></li>
     </ol>
   </nav>
-  @if(Session::has('deleted_user'))
+  @if(Session::has('deleted_protocolotipo'))
   <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <strong>Info!</strong>  {{ session('deleted_user') }}
+    <strong>Info!</strong>  {{ session('deleted_protocolotipo') }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   @endif
-  @if(Session::has('create_user'))
+  @if(Session::has('create_protocolotipo'))
   <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <strong>Info!</strong>  {{ session('create_user') }}
+    <strong>Info!</strong>  {{ session('create_protocolotipo') }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   @endif
   <div class="btn-group py-1" role="group" aria-label="Opções">
-    <a href="{{ route('users.create') }}" class="btn btn-secondary btn-sm" role="button"><i class="bi bi-person-plus-fill"></i> Novo Registro</a>
+    @can('protocolotipo-create', Auth::user())
+    <a href="{{ route('protocolotipos.create') }}" class="btn btn-secondary btn-sm" role="button"><i class="bi bi-person-plus-fill"></i> Novo Registro</a>
+    @endcan
     <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#modalFilter"><i class="bi bi-funnel"></i> Filtrar</button>
+    @can('protocolotipo-export', Auth::user())
     <div class="btn-group" role="group">
       <button id="btnGroupDropOptions" type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="bi bi-gear"></i> Opções
+        Opções
       </button>
       <div class="dropdown-menu" aria-labelledby="btnGroupDropOptions">
-        <a class="dropdown-item" href="{{ route('roles.index') }}"><i class="bi bi-layout-sidebar"></i> Perfis</a>
-        <a class="dropdown-item" href="{{ route('permissions.index') }}"><i class="bi bi-layout-sidebar"></i> Permissões</a>
-        <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="#" id="btnExportarCSV"><i class="bi bi-file-earmark-spreadsheet-fill"></i> Exportar Planilha</a>
         <a class="dropdown-item" href="#" id="btnExportarPDF"><i class="bi bi-file-pdf-fill"></i> Exportar PDF</a>
       </div>
     </div>
+    @endcan
   </div>
   <div class="table-responsive">
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">Nome</th>
-                <th scope="col">Matrícula</th>
-                <th scope="col">Setor</th>
-                <th scope="col">E-mail</th>
-                <th scope="col">Situação</th>
+                <th scope="col">Descrição</th>
                 <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
-            @foreach($users as $user)
+            @foreach($protocolotipos as $protocolotipo)
             <tr>
-                <td>{{$user->name}}</td>
-                <td>{{$user->matricula}}</td>
-                <td>{{$user->setor->descricao}}</td>
-                <td>{{$user->email}}</td>
-                <td>
-                @if($user->active == 'N')
-                  <h4><span class="badge badge-warning">Bloqueado <i class="bi bi-lock-fill"></i></span></h4>
-                @endif
-                </td>
+                <td>{{$protocolotipo->descricao}}</td>
                 <td>
                   <div class="btn-group" role="group">
-                    <a href="{{route('users.edit', $user->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-pencil-square"></i></a>
-                    <a href="{{route('users.show', $user->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-trash"></i></a>
+                    @can('protocolotipo-edit', Auth::user())
+                    <a href="{{route('protocolotipos.edit', $protocolotipo->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-pencil-square"></i></a>
+                    @endcan
+                    @can('protocolotipo-show', Auth::user())
+                    <a href="{{route('protocolotipos.show', $protocolotipo->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-trash"></i></a>
+                    @endcan
                   </div>
                 </td>
             </tr>    
@@ -74,9 +67,9 @@
         </tbody>
     </table>
   </div>
-  <p class="text-center">Página {{ $users->currentPage() }} de {{ $users->lastPage() }}. Total de registros: {{ $users->total() }}.</p>
+  <p class="text-center">Página {{ $protocolotipos->currentPage() }} de {{ $protocolotipos->lastPage() }}. Total de registros: {{ $protocolotipos->total() }}.</p>
   <div class="container-fluid">
-      {{ $users->links() }}
+      {{ $protocolotipos->links() }}
   </div>
   <!-- Janela de filtragem da consulta -->
   <div class="modal fade" id="modalFilter" tabindex="-1" role="dialog" aria-labelledby="JanelaFiltro" aria-hidden="true">
@@ -90,19 +83,6 @@
         </div>
         <div class="modal-body">
           <!-- Filtragem dos dados -->
-          <form method="GET" action="{{ route('users.index') }}">
-            <div class="form-group">
-              <label for="name">Nome</label>
-              <input type="text" class="form-control" id="name" name="name" value="{{request()->input('name')}}">
-            </div>
-            <div class="form-group">
-              <label for="email">E-mail</label>
-              <input type="text" class="form-control" id="email" name="email" value="{{request()->input('email')}}">
-            </div>
-            <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i> Pesquisar</button>
-            <a href="{{ route('users.index') }}" class="btn btn-primary btn-sm" role="button">Limpar</a>
-          </form>
-          <br>
           <!-- Seleção de número de resultados por página -->
           <div class="form-group">
             <select class="form-control" name="perpage" id="perpage">
@@ -113,7 +93,7 @@
           </div>
         </div>     
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i> Fechar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i></i> Fechar</button>
         </div>
       </div>
     </div>
@@ -126,19 +106,15 @@ $(document).ready(function(){
     $('#perpage').on('change', function() {
         perpage = $(this).find(":selected").val(); 
         
-        window.open("{{ route('users.index') }}" + "?perpage=" + perpage,"_self");
+        window.open("{{ route('protocolotipos.index') }}" + "?perpage=" + perpage,"_self");
     });
 
     $('#btnExportarCSV').on('click', function(){
-        var filtro_name = $('input[name="name"]').val();
-        var filtro_email = $('input[name="email"]').val();
-        window.open("{{ route('users.export.csv') }}" + "?name=" + filtro_name + "&email=" + filtro_email,"_self");
+        window.open("{{ route('protocolotipos.export.csv') }}","_self");
     });
 
     $('#btnExportarPDF').on('click', function(){
-        var filtro_name = $('input[name="name"]').val();
-        var filtro_email = $('input[name="email"]').val();
-        window.open("{{ route('users.export.pdf') }}" + "?name=" + filtro_name + "&email=" + filtro_email,"_self");
+        window.open("{{ route('protocolotipos.export.pdf') }}","_self");
     });
 }); 
 </script>

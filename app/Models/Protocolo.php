@@ -15,29 +15,29 @@ class Protocolo extends Model
 
     protected $dates = ['created_at', 'concluido_em'];
 
-        public function setor()
+    public function setor()
     {
-        return $this->belongsTo('App\Setor');
+        return $this->belongsTo(Setor::class);
     }
 
     public function protocoloTipo()
     {
-        return $this->belongsTo('App\ProtocoloTipo');
+        return $this->belongsTo(ProtocoloTipo::class);
     }
 
     public function protocoloSituacao()
     {
-        return $this->belongsTo('App\ProtocoloSituacao');
+        return $this->belongsTo(ProtocoloSituacao::class);
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 
     public function protocoloTramitacaos()
     {
-        return $this->hasMany('App\ProtocoloTramitacao');
+        return $this->hasMany(ProtocoloTramitacao::class);
     }
 
     /**
@@ -45,11 +45,12 @@ class Protocolo extends Model
     */
     public function anexos()
     {
-        return $this->morphMany('App\Anexo', 'anexoable');
+        return $this->hasMany(Anexo::class);
     }
 
-    public function notas()
+
+    public function users()
     {
-        return $this->morphMany('App\Nota', 'notaable');
-    }    
+        return $this->belongsToMany(User::class);
+    }        
 }

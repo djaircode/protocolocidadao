@@ -21,6 +21,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'adm@mail.com',
             'active' => 'Y',
             'password' => Hash::make('123456'),
+            'setor_id' => 1,
         ]);
 
         DB::table('users')->insert([
@@ -28,6 +29,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'gerente@mail.com',
             'active' => 'Y',
             'password' => Hash::make('123456'),
+            'setor_id' => 1,
         ]);
 
         DB::table('users')->insert([
@@ -35,6 +37,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'operador@mail.com',
             'active' => 'Y',
             'password' => Hash::make('123456'),
+            'setor_id' => 1,
         ]);
 
         DB::table('users')->insert([
@@ -42,6 +45,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'leitor@mail.com',
             'active' => 'Y',
             'password' => Hash::make('123456'),
+            'setor_id' => 1,
         ]);
     }
 }

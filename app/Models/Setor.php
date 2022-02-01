@@ -15,11 +15,11 @@ class Setor extends Model
 
     public function users()
     {
-        return $this->belongsToMany('App\User');
+        return $this->belongsToMany(User::class);
     }
 
     public function protocolos()
     {
-        return $this->hasMany('App\Protocolo');
+        return $this->hasMany(Protocolo::class);
     } 
 }

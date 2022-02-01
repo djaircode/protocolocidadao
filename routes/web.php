@@ -43,6 +43,7 @@ Route::prefix('admin')->namespace('Admin')->group(function () {
     Route::put('/users/password/update', 'ChangePasswordController@passwordUpdate')->name('users.passwordupdate');
     Route::get('/users/export/csv', 'UserController@exportcsv')->name('users.export.csv');
     Route::get('/users/export/pdf', 'UserController@exportpdf')->name('users.export.pdf');
+    Route::get('/users/autocomplete', 'UserController@autocomplete')->name('users.autocomplete');
     Route::resource('/users', 'UserController');
 
     /* Permissões */
@@ -66,3 +67,21 @@ Route::resource('/setores', 'SetorController');
 Route::get('/protocolotipos/export/csv', 'ProtocoloTipoController@exportcsv')->name('protocolotipos.export.csv');
 Route::get('/protocolotipos/export/pdf', 'ProtocoloTipoController@exportpdf')->name('protocolotipos.export.pdf');
 Route::resource('/protocolotipos', 'ProtocoloTipoController');
+
+/* PROTOCOLOS */
+## cooncluir um protocolo
+Route::post('/protocolos/concluir/{id}', 'ProtocoloController@concluir')->name('protocolos.concluir');
+## demais rotas
+Route::get('/protocolos/export/csv', 'ProtocoloController@exportcsv')->name('protocolos.export.csv');
+Route::get('/protocolos/export/pdf', 'ProtocoloController@exportpdf')->name('protocolos.export.pdf');
+Route::get('/protocolos/export/pdf/{id}/individual', 'ProtocoloController@exportpdfindividual')->name('protocolos.export.pdf.individual');
+Route::post('/protocolos/reabrir/{id}', 'ProtocoloController@reabrir')->name('protocolos.reabrir');
+Route::resource('/protocolos', 'ProtocoloController');
+
+/*ANEXOS DOS PROTOCOLOS*/
+Route::resource('/protocoloanexos', 'ProtocoloAnexoController')->only(['store', 'destroy',]);
+
+/* TRAMITAÇÃO DOS PROTOCOLOS */
+Route::get('/protocolotramitacoes/export/csv', 'ProtocoloTramitacaoController@exportcsv')->name('protocolotramitacoes.export.csv');
+Route::get('/protocolotramitacoes/export/pdf', 'ProtocoloTramitacaoController@exportpdf')->name('protocolotramitacoes.export.pdf');
+Route::resource('/protocolotramitacoes', 'ProtocoloTramitacaoController');

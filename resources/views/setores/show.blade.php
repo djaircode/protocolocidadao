@@ -4,28 +4,27 @@
 <div class="container-fluid">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ route('users.index') }}">Lista de Operadores</a></li>
+      <li class="breadcrumb-item"><a href="{{ route('setores.index') }}">Lista de Setores</a></li>
       <li class="breadcrumb-item active" aria-current="page">Exibir Registro</li>
     </ol>
   </nav>
 </div>
 
-
 <div class="container">
   <div class="card">
     <div class="card-header">
-      Operador
+      Setores
     </div>
     <div class="card-body">
       <ul class="list-group list-group-flush">
-        <li class="list-group-item">Nome: {{$user->name}}</li>
-        <li class="list-group-item">E-mail: {{$user->email}}</li>
-        <li class="list-group-item">Ativo: {{($user->active == 'Y') ? 'Sim' : 'Não'}} </li>
+        <li class="list-group-item">Código: {{$setor->codigo}}</li>
+        <li class="list-group-item">Descrição: {{$setor->descricao}}</li>
+        <li class="list-group-item">Contato: {{$setor->contato}}</li>
       </ul>
     </div>
     <div class="card-footer text-right">
       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalLixeira"><i class="bi bi-trash"></i> Enviar para Lixeira</button>
-      <a href="{{ route('users.index') }}" class="btn btn-primary" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a>      
+      <a href="{{ route('setores.index') }}" class="btn btn-primary" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a>      
     </div>
   </div>
 </div>    
@@ -46,7 +45,7 @@
           <p><strong>Atenção!</strong> Ao excluir esse registro todo e qualquer vínculo que ele tiver com outros dados será excluído.</p>
           <h2>Confirma?</h2>
         </div>
-        <form method="post" action="{{route('users.destroy', $user->id)}}">
+        <form method="post" action="{{route('setores.destroy', $setor->id)}}">
           @csrf
           @method('DELETE')
           <div class="form-group">

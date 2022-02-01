@@ -29,6 +29,10 @@ class CreateAnexoUserTable extends Migration
      */
     public function down()
     {
+        Schema::table('anexo_user', function (Blueprint $table) {
+            $table->dropForeign('anexo_user_user_id_foreign');
+            $table->dropForeign('anexo_user_anexo_id_foreign');
+        });
         Schema::dropIfExists('anexo_user');
     }
 }

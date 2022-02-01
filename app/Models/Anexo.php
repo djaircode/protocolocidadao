@@ -10,14 +10,14 @@ class Anexo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'arquivoNome', 'codigoPasta', 'codigoAnexo', 'user_id',
+        'arquivoNome', 'codigoAnexoPublico', 'codigoAnexoSecreto', 'user_id', 'protocolo_id'
     ];
 
     /*
 
-        O campo codigoAnexo será um valor aleatório usado na criação do link para acesso ao arquivo (download), exemplo:
+        O campo codigoAnexoPublico será um valor aleatório usado na criação do link para acesso ao arquivo (download), exemplo:
         .../sistema/anexos/2837282728/download
-        o código da pasta (codigoPasta) será usado para acessar a pasta caminho onde este arquivo será armazenada no sistema e só será possível encontrar o caminho conhecendo o valor do codigoAnexo
+        o nome da pasta será dado pelo (codigoAnexoSecreto), será usado para acessar a pasta caminho onde este arquivo será armazenada no sistema e só será possível encontrar o caminho conhecendo o valor do codigoAnexo
         Essa técnica será usada para melhorar a proteção do arquivo armazenada no servidor
 
     */
@@ -26,7 +26,7 @@ class Anexo extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 
     public function users()

@@ -4,69 +4,66 @@
 <div class="container-fluid">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('users.index') }}">Lista de Operadores</a></li>
+      <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('setores.index') }}">Lista de Setores</a></li>
     </ol>
   </nav>
-  @if(Session::has('deleted_user'))
+  @if(Session::has('deleted_setor'))
   <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <strong>Info!</strong>  {{ session('deleted_user') }}
+    <strong>Info!</strong>  {{ session('deleted_setor') }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   @endif
-  @if(Session::has('create_user'))
+  @if(Session::has('create_setor'))
   <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <strong>Info!</strong>  {{ session('create_user') }}
+    <strong>Info!</strong>  {{ session('create_setor') }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   @endif
   <div class="btn-group py-1" role="group" aria-label="Opções">
-    <a href="{{ route('users.create') }}" class="btn btn-secondary btn-sm" role="button"><i class="bi bi-person-plus-fill"></i> Novo Registro</a>
+    @can('setor-create', Auth::user())
+    <a href="{{ route('setores.create') }}" class="btn btn-secondary btn-sm" role="button"><i class="bi bi-person-plus-fill"></i> Novo Registro</a>
+    @endcan
     <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#modalFilter"><i class="bi bi-funnel"></i> Filtrar</button>
+    @can('setor-export', Auth::user())
     <div class="btn-group" role="group">
       <button id="btnGroupDropOptions" type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="bi bi-gear"></i> Opções
+        <i class="fas fa-print"></i> Relatórios
       </button>
       <div class="dropdown-menu" aria-labelledby="btnGroupDropOptions">
-        <a class="dropdown-item" href="{{ route('roles.index') }}"><i class="bi bi-layout-sidebar"></i> Perfis</a>
-        <a class="dropdown-item" href="{{ route('permissions.index') }}"><i class="bi bi-layout-sidebar"></i> Permissões</a>
-        <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="#" id="btnExportarCSV"><i class="bi bi-file-earmark-spreadsheet-fill"></i> Exportar Planilha</a>
         <a class="dropdown-item" href="#" id="btnExportarPDF"><i class="bi bi-file-pdf-fill"></i> Exportar PDF</a>
       </div>
     </div>
+    @endcan
   </div>
   <div class="table-responsive">
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">Nome</th>
-                <th scope="col">Matrícula</th>
-                <th scope="col">Setor</th>
-                <th scope="col">E-mail</th>
-                <th scope="col">Situação</th>
+                <th scope="col">Código</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Contato</th>
                 <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
-            @foreach($users as $user)
+            @foreach($setores as $setor)
             <tr>
-                <td>{{$user->name}}</td>
-                <td>{{$user->matricula}}</td>
-                <td>{{$user->setor->descricao}}</td>
-                <td>{{$user->email}}</td>
-                <td>
-                @if($user->active == 'N')
-                  <h4><span class="badge badge-warning">Bloqueado <i class="bi bi-lock-fill"></i></span></h4>
-                @endif
-                </td>
+                <td>{{$setor->codigo}}</td>
+                <td>{{$setor->descricao}}</td>
+                <td>{{$setor->contato}}</td>
                 <td>
                   <div class="btn-group" role="group">
-                    <a href="{{route('users.edit', $user->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-pencil-square"></i></a>
-                    <a href="{{route('users.show', $user->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-trash"></i></a>
+                    @can('setor-edit', Auth::user())
+                    <a href="{{route('setores.edit', $setor->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-pencil-square"></i></a>
+                    @endcan
+                    @can('setor-show', Auth::user())
+                    <a href="{{route('setores.show', $setor->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-trash"></i></a>
+                    @endcan
                   </div>
                 </td>
             </tr>    
@@ -74,9 +71,9 @@
         </tbody>
     </table>
   </div>
-  <p class="text-center">Página {{ $users->currentPage() }} de {{ $users->lastPage() }}. Total de registros: {{ $users->total() }}.</p>
+  <p class="text-center">Página {{ $setores->currentPage() }} de {{ $setores->lastPage() }}. Total de registros: {{ $setores->total() }}.</p>
   <div class="container-fluid">
-      {{ $users->links() }}
+      {{ $setores->links() }}
   </div>
   <!-- Janela de filtragem da consulta -->
   <div class="modal fade" id="modalFilter" tabindex="-1" role="dialog" aria-labelledby="JanelaFiltro" aria-hidden="true">
@@ -90,17 +87,17 @@
         </div>
         <div class="modal-body">
           <!-- Filtragem dos dados -->
-          <form method="GET" action="{{ route('users.index') }}">
+          <form method="GET" action="{{ route('setores.index') }}">
             <div class="form-group">
-              <label for="name">Nome</label>
-              <input type="text" class="form-control" id="name" name="name" value="{{request()->input('name')}}">
+              <label for="codigo">Código</label>
+              <input type="text" class="form-control" id="codigo" name="codigo" value="{{request()->input('codigo')}}">
             </div>
             <div class="form-group">
-              <label for="email">E-mail</label>
-              <input type="text" class="form-control" id="email" name="email" value="{{request()->input('email')}}">
+              <label for="descricao">Descrição</label>
+              <input type="text" class="form-control" id="descricao" name="descricao" value="{{request()->input('descricao')}}">
             </div>
             <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i> Pesquisar</button>
-            <a href="{{ route('users.index') }}" class="btn btn-primary btn-sm" role="button">Limpar</a>
+            <a href="{{ route('setores.index') }}" class="btn btn-primary btn-sm" role="button">Limpar</a>
           </form>
           <br>
           <!-- Seleção de número de resultados por página -->
@@ -113,7 +110,7 @@
           </div>
         </div>     
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i> Fechar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i></i> Fechar</button>
         </div>
       </div>
     </div>
@@ -126,19 +123,19 @@ $(document).ready(function(){
     $('#perpage').on('change', function() {
         perpage = $(this).find(":selected").val(); 
         
-        window.open("{{ route('users.index') }}" + "?perpage=" + perpage,"_self");
+        window.open("{{ route('setores.index') }}" + "?perpage=" + perpage,"_self");
     });
 
     $('#btnExportarCSV').on('click', function(){
-        var filtro_name = $('input[name="name"]').val();
-        var filtro_email = $('input[name="email"]').val();
-        window.open("{{ route('users.export.csv') }}" + "?name=" + filtro_name + "&email=" + filtro_email,"_self");
+        var filtro_name = $('input[name="codigo"]').val();
+        var filtro_email = $('input[name="descricao"]').val();
+        window.open("{{ route('setores.export.csv') }}" + "?codigo=" + filtro_name + "&descricao=" + filtro_email,"_self");
     });
 
     $('#btnExportarPDF').on('click', function(){
-        var filtro_name = $('input[name="name"]').val();
-        var filtro_email = $('input[name="email"]').val();
-        window.open("{{ route('users.export.pdf') }}" + "?name=" + filtro_name + "&email=" + filtro_email,"_self");
+        var filtro_name = $('input[name="codigo"]').val();
+        var filtro_email = $('input[name="descricao"]').val();
+        window.open("{{ route('setores.export.pdf') }}" + "?codigo=" + filtro_name + "&descricao=" + filtro_email,"_self");
     });
 }); 
 </script>

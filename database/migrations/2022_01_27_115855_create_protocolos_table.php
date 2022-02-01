@@ -17,7 +17,7 @@ class CreateProtocolosTable extends Migration
             $table->id();
 
             $table->text('conteudo');
-            $table->string('referencia');
+            $table->string('referencia')->nullable();
 
             // fk
             $table->unsignedBigInteger('setor_id');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use App\Models\Perpage;
 use App\Models\Role;
+use App\Models\Setor;
 
 use Response;
 
@@ -76,7 +77,9 @@ class UserController extends Controller
         // listagem de perfis (roles)
         $roles = Role::orderBy('description','asc')->get();
 
-        return view('admin.users.create', compact('roles'));
+        $setores = Setor::orderBy('descricao', 'asc')->get();
+
+        return view('admin.users.create', compact('roles', 'setores'));
     }
 
 
@@ -85,7 +88,11 @@ class UserController extends Controller
         $this->validate($request, [
           'name' => 'required',
           'email' => 'required|email|unique:users,email',
-          'password' => 'required|min:6|confirmed'
+          'password' => 'required|min:6|confirmed',
+          'setor_id' => 'required',
+        ],
+        [
+            'setor_id.required' => 'Selecione o setor do funcionário na lista',
         ]);
 
         $user = $request->all();
@@ -134,7 +141,9 @@ class UserController extends Controller
         // listagem de perfis (roles)
         $roles = Role::orderBy('description','asc')->get();
 
-        return view('admin.users.edit', compact('user', 'roles'));
+        $setores = Setor::orderBy('descricao', 'asc')->get();
+
+        return view('admin.users.edit', compact('user', 'roles', 'setores'));
     }
 
 
@@ -153,7 +162,7 @@ class UserController extends Controller
             $input['password'] = Hash::make($input['password']);
         } else {
             $input = $request->except('password');
-        }   
+        }
 
         // configura se operador está habilitado ou não a usar o sistema
         if (isset($input['active'])) {
@@ -289,4 +298,40 @@ class UserController extends Controller
         $this->pdf->Output('D', 'Operadores_' .  date("Y-m-d H:i:s") . '.pdf', true);
         exit;
     }
+
+        /**
+     * Função de autocompletar para ser usada pelo typehead
+     * todo usuário logado no sistema pode acessar essa consulta
+     *
+     * @param  
+     * @return json
+     */
+    public function autocomplete(Request $request)
+    {
+
+        $profissionais = DB::table('users');
+
+        // join
+        $profissionais = $profissionais->join('setors', 'setors.id', '=', 'users.setor_id');
+
+        // select
+        $profissionais = $profissionais->select(
+          'users.name as text', 
+          'users.id as value', 
+          'setors.descricao as setor',  
+          'users.setor_id as setor_id',
+          'users.matricula as matricula',
+          'users.email as email'
+        );
+        
+        //where
+        $profissionais = $profissionais->where("users.name","LIKE","%{$request->input('query')}%");
+        $profissionais = $profissionais->where("users.active","=","Y");
+
+        //get
+        $profissionais = $profissionais->get();
+
+
+        return response()->json($profissionais, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+    }    
 }

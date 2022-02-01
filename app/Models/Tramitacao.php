@@ -17,26 +17,26 @@ class Tramitacao extends Model
 
     public function protocolo()
     {
-        return $this->belongsTo('App\Protocolo');
+        return $this->belongsTo(Protocolo::class);
     }
 
     public function userOrigem()
     {
-        return $this->belongsTo('App\User', 'user_id_origem');
+        return $this->belongsTo(User::class, 'user_id_origem');
     }
 
     public function setorOrigem()
     {
-        return $this->belongsTo('App\Setor', 'setor_id_origem');
+        return $this->belongsTo(Setor::class, 'setor_id_origem');
     }
 
     public function userDestino()
     {
-        return $this->belongsTo('App\User', 'user_id_destino');
+        return $this->belongsTo(User::class, 'user_id_destino');
     }    
     
     public function setorDestino()
     {
-        return $this->belongsTo('App\Setor', 'setor_id_destino');
+        return $this->belongsTo(Setor::class, 'setor_id_destino');
     }    
 }

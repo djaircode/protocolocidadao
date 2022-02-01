@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.united.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.superhero.css') }}">
 
     <!-- Custom css, necessary for typehead -->
     @yield('css-header')
