@@ -35,9 +35,9 @@ class Protocolo extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function protocoloTramitacaos()
+    public function tramitacaos()
     {
-        return $this->hasMany(ProtocoloTramitacao::class);
+        return $this->hasMany(Tramitacao::class);
     }
 
     /**

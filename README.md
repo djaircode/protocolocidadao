@@ -10,7 +10,7 @@ Faz uso também das seguintes bibliotecas:
 - [typeahead](https://github.com/corejavascript/typeahead.js)
 - [bootstrap-datepicker](https://github.com/uxsolutions/bootstrap-datepicker)
 
-### Notas
+## Notas
 - Utilizo os temas do site [bootswatch](https://bootswatch.com/), os temas estão dentro da pasta public/css, basta alterar os layouts das páginas blade dentro da pasta resources/layouts
 - Na raiz do projeto o arquivo protocolo.mdj pode ser aberto no software [StarUML](https://staruml.io/), esse arquivo contém os diagrams em UML desse projeto.
 
@@ -20,6 +20,15 @@ Faz uso também das seguintes bibliotecas:
 - Permitir que informações sejam agregadas aos protocolos/tramitações através de textos ou arquivos anexados
 - Oferecer uma opção segura para tramitação de documentos digitais entre funcionários e quando possível abolir a tramitação dos documentos físicos
 - Oferecer estatísticas sobre todo processo de tramitação de documentos entre setores, podendo, por exemplo, saber a média de tempo de conclusão dos protolos, dentre outros a serem desenvolvidos
+
+# Regras
+
+- A edição do protocolo só pode ser feita pelo funcionário que criou o protocolo
+- Somente o funcionário proprietário do protocolo pode concluir e reabrir um protocolo
+- Não foi implementado a exclusão do protocolo, para essa tarefa deve-se concluir e escolher a opção cancelado na tela do protocolo, somente o funcionário que criou o protocolo pode fazer isso
+
+- Os anexos só podem ser excluídos pelo funcionário que fez upload do arquivo, tanto no protocolo como na tramitação
+- Os anexos podem ser incluídos ao protocolo na tela de edição de protocolo e na tela de edição da tramitação
 
 ## Requisitos
 

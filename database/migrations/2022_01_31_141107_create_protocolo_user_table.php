@@ -14,8 +14,11 @@ class CreateProtocoloUserTable extends Migration
     public function up()
     {
         Schema::create('protocolo_user', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('protocolo_id');
+            $table->index(['user_id', 'protocolo_id']);
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('protocolo_id')->references('id')->on('protocolos')->onDelete('cascade');
         });
     }
 
@@ -26,6 +29,10 @@ class CreateProtocoloUserTable extends Migration
      */
     public function down()
     {
+        Schema::table('protocolo_user', function (Blueprint $table) {
+            $table->dropForeign('protocolo_user_user_id_foreign');
+            $table->dropForeign('protocolo_user_protocolo_id_foreign');
+        });
         Schema::dropIfExists('protocolo_user');
     }
 }

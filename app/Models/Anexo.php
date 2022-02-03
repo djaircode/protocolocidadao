@@ -32,5 +32,10 @@ class Anexo extends Model
     public function users()
     {
         return $this->belongsToMany(User::class);
-    }        
+    }
+
+    public function protocolo()
+    {
+        return $this->belongsTo(Protocolo::class);
+    }      
 }

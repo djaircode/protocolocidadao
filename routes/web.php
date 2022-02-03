@@ -79,9 +79,10 @@ Route::post('/protocolos/reabrir/{id}', 'ProtocoloController@reabrir')->name('pr
 Route::resource('/protocolos', 'ProtocoloController');
 
 /*ANEXOS DOS PROTOCOLOS*/
-Route::resource('/protocoloanexos', 'ProtocoloAnexoController')->only(['store', 'destroy',]);
+Route::get('anexos/{codigoanexo}/download', 'AnexoController@download')->name('anexos.download');
+Route::resource('/anexos', 'AnexoController')->only(['store', 'destroy',]);
 
 /* TRAMITAÇÃO DOS PROTOCOLOS */
-Route::get('/protocolotramitacoes/export/csv', 'ProtocoloTramitacaoController@exportcsv')->name('protocolotramitacoes.export.csv');
-Route::get('/protocolotramitacoes/export/pdf', 'ProtocoloTramitacaoController@exportpdf')->name('protocolotramitacoes.export.pdf');
-Route::resource('/protocolotramitacoes', 'ProtocoloTramitacaoController');
+Route::get('/tramitacoes/export/csv', 'TramitacaoController@exportcsv')->name('tramitacoes.export.csv');
+Route::get('/tramitacoes/export/pdf', 'TramitacaoController@exportpdf')->name('tramitacoes.export.pdf');
+Route::resource('/tramitacoes', 'TramitacaoController');

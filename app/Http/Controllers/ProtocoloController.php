@@ -8,6 +8,7 @@ use App\Models\Anexo;
 use App\Models\ProtocoloSituacao;
 use App\Models\ProtocoloTipo;
 use App\Models\Setor;
+use App\Models\User;
 
 use App\Models\Perpage;
 
@@ -83,12 +84,12 @@ class ProtocoloController extends Controller
         $this->validate($request, [
           'conteudo' => 'required',
           'protocolo_tipo_id' => 'required',       
-          'arquivos.*' => 'mimes:pdf,doc,docx|max:10240',
+          'arquivos.*' => 'file|mimes:pdf,doc,docx,rtf,jpg,jpeg,png,xls,xlsx,ppt,pptx|max:10240',
         ],
         [
             'conteudo.required' => 'Preencha o conteúdo ou descrição do protocolo',
             'protocolo_tipo_id.required' => 'Selecione o tipo do protocolo na lista',
-            'arquivos.*.mimes' => 'O arquivo anexado deve ser das seguintes extensões: pdf, doc, docx, rtf, txt, jpg, jpeg, jpg, png, bmp, xls, xlsx, csv ou xml',
+            'arquivos.*.mimes' => 'O arquivo anexado deve ser das seguintes extensões: pdf, doc, docx, ppt, pptx, xls, xlsx, png, jpg, jpeg ou rtf',
             'arquivos.*.max' => 'O arquivo anexado não pode ter mais de 5MB',
         ]);
 
@@ -106,7 +107,9 @@ class ProtocoloController extends Controller
 
         $protocolo = Protocolo::create($protocolo_input); //salva
 
-        Session::flash('create_protocolo', 'Protocolo cadastrado com sucesso!');
+        // acesso ao protocolo
+        $user->protocolos()->attach($protocolo);
+
 
         // caso faça a primeira tramitação
         if (isset($protocolo_input['funcionario_tramitacao_id']) && !empty($protocolo_input['funcionario_tramitacao_id'])){
@@ -127,13 +130,17 @@ class ProtocoloController extends Controller
             } else {
                 $input_tramitacao['mensagem'] = 'Nenhuma mensagem';
             }    
-            $tramitacao = Tramitacao::create($input_tramitacao); //salva            
+            $tramitacao = Tramitacao::create($input_tramitacao); //salva
+
+            // acesso ao protocolo
+            $user_tramitado = User::findOrFail($protocolo_input['funcionario_tramitacao_id']);
+            $user_tramitado->protocolos()->attach($protocolo);          
         }
 
         // caso tenha arquivos faz a anexação
         if($request->hasFile('arquivos'))
         {
-            $files = $request->file('arquivos');
+            $files = $request->file('arquivos');            
 
             foreach ($files as $file) {
 
@@ -146,19 +153,29 @@ class ProtocoloController extends Controller
                 // salva o arquivo
                 $path = $file->storeAs($codigoAnexoSecreto, $file->getClientOriginalName(), 'public');
 
-                $temp = new Anexo;
+                $anexo = new Anexo;
 
-                $temp->protocolo_id = $protocolo->id;
-                $temp->user_id =  $user->id;  
-                $temp->arquivoNome =  $nome_arquivo;  
-                $temp->codigoAnexoPublico =  $codigoAnexoPublico;
-                $temp->codigoAnexoSecreto =  $codigoAnexoSecreto;
+                $anexo->protocolo_id = $protocolo->id;
+                $anexo->user_id =  $user->id;  
+                $anexo->arquivoNome =  $nome_arquivo; 
+                $anexo->codigoAnexoPublico =  $codigoAnexoPublico;
+                $anexo->codigoAnexoSecreto =  $codigoAnexoSecreto;
 
-                $temp->save();
+                $anexo->save();
+
+                //acessos
+                $user->anexos()->attach($anexo);
+                // se tiver tramitado a alguem da o acesso a esse usuário
+                if (isset($protocolo_input['funcionario_tramitacao_id']) && !empty($protocolo_input['funcionario_tramitacao_id'])){
+                    $user_tramitado = User::findOrFail($protocolo_input['funcionario_tramitacao_id']);
+                    $user_tramitado->anexos()->attach($anexo);  
+                }    
+                 
             }
         }
 
         #return redirect(route('protocolos.index'));  
+        Session::flash('create_protocolo', 'Protocolo cadastrado com sucesso!');
 
         return redirect(route('protocolos.edit', $protocolo->id));
     }
@@ -182,7 +199,19 @@ class ProtocoloController extends Controller
      */
     public function edit($id)
     {
-        //
+        $protocolo = Protocolo::findOrFail($id);
+
+        $protocolotipos = ProtocoloTipo::orderBy('descricao', 'asc')->get();
+
+        $anexos = $protocolo->anexos()->orderBy('id', 'desc')->get();
+
+        $tramitacoes = $protocolo->tramitacaos()->orderBy('id', 'desc')->get();
+
+        $user = Auth::user();
+
+
+
+        return view('protocolos.edit', compact('protocolo', 'protocolotipos', 'anexos', 'tramitacoes'));
     }
 
     /**
@@ -194,7 +223,20 @@ class ProtocoloController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+          'conteudo' => 'required',
+        ],
+        [
+            'conteudo.required' => 'Preencha o conteúdo ou descrição do protocolo',
+        ]);
+
+        $protocolo = Protocolo::findOrFail($id);
+            
+        $protocolo->update($request->all());
+        
+        Session::flash('edited_protocolo', 'Protocolo alterado com sucesso!');
+
+        return redirect(route('protocolos.edit', $id));
     }
 
     /**
@@ -207,4 +249,25 @@ class ProtocoloController extends Controller
     {
         //
     }
+
+    public function concluir(Request $request, $id)
+    {
+
+        $protocolo = Protocolo::findOrFail($id);
+
+        $input = $request->all();
+
+        $protocolo->concluido = 's';
+        $protocolo->protocolo_situacao_id = $input['protocolo_situacao_id']; // concluido e 4 cancelado
+        $protocolo->concluido_mensagem = $input['concluido_mensagem'];
+        $protocolo->concluido_em = Carbon::now()->toDateTimeString();
+            
+        $protocolo->save();
+        
+        Session::flash('concluir_protocolo', 'Protocolo finalizado!!');
+
+        //dd($protocolo);
+
+        return redirect(route('protocolos.edit', $id));
+    }    
 }

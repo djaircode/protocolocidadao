@@ -61,7 +61,7 @@
         <select class="form-control {{ $errors->has('protocolo_tipo_id') ? ' is-invalid' : '' }}" name="protocolo_tipo_id" id="protocolo_tipo_id">
           <option value="" selected="true">Selecione ...</option>        
           @foreach($protocolotipos as $protocolotipo)
-          <option value="{{$protocolotipo->id}}">{{$protocolotipo->descricao}}</option>
+          <option value="{{$protocolotipo->id}}" {{ old("protocolo_tipo_id") == $protocolotipo->id ? "selected":"" }}>{{$protocolotipo->descricao}}</option>
           @endforeach
         </select>
         @if ($errors->has('protocolo_tipo_id'))
@@ -114,7 +114,7 @@
     <div class="form-group">
       <ul class="list-group">
         <li class="list-group-item">
-          <label for="arquivos">Somente são aceitos os seguintes formatos para o arquivo: pdf, doc, docx, rtf, txt, jpg, jpeg, jpg, png, bmp, xls, xlsx, csv, xml. Cada arquivo não pode ter mais de 10Mb. Você pode adicionar múltiplos arquivos de uma só vez. <strong class="text-warning">(Opcional)</strong></label>
+          <label for="arquivos">Somente são aceitos os seguintes formatos para o arquivo: pdf, doc, docx, ppt, pptx, xls, xlsx, png, jpg, jpeg ou rtf. Cada arquivo não pode ter mais de 10Mb. Você pode adicionar múltiplos arquivos de uma só vez. <strong class="text-warning">(Opcional)</strong></label>
           <input type="file" class="form-control-file" id="arquivos" name="arquivos[]" multiple data-show-upload="true" data-show-caption="true">
         </li>
       </ul>

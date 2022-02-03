@@ -51,7 +51,7 @@
         @endif
       </div>
     </div>
-    <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Alterar Dados do Setor</button>
+    <button type="submit" class="btn btn-primary"><i class="bi bi-pencil-square"></i> Alterar Dados do Setor</button>
   </form>
 </div>
 <div class="container">
