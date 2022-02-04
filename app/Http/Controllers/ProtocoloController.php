@@ -58,7 +58,99 @@ class ProtocoloController extends Controller
      */
     public function index()
     {
-        //
+        $protocolos = new Protocolo;
+
+        // filtra os protocolos que o usuário logado possui acesso
+        // os protocolos criados por ele (pode editar)
+        // os protocolos tramitados para ele (só pode visualizar)
+        $user = Auth::user();
+        $lista_protocolos_com_acesso = $user->protocolos()->pluck('id')->toArray();
+        $protocolos = $protocolos->whereIn('id', $lista_protocolos_com_acesso);
+
+        //filtros
+        if (request()->has('id_protocolo') && !empty(request('id_protocolo')) ){    
+            $protocolos = $protocolos->where('id', '=', request('id_protocolo'));
+        }
+
+        if (request()->has('referencia')){
+            $protocolos = $protocolos->where('referencia', 'like', '%' . request('referencia') . '%');
+        }
+
+        if (request()->has('dtainicio')){
+             if (request('dtainicio') != ""){
+                $dataFormatadaMysql = Carbon::createFromFormat('d/m/Y', request('dtainicio'))->format('Y-m-d 00:00:00');           
+                $protocolos = $protocolos->where('created_at', '>=', $dataFormatadaMysql);                
+             }
+        }
+
+        if (request()->has('dtafinal')){
+             if (request('dtafinal') != ""){
+                $dataFormatadaMysql = Carbon::createFromFormat('d/m/Y', request('dtafinal'))->format('Y-m-d 23:59:59');         
+                $protocolos = $protocolos->where('created_at', '<=', $dataFormatadaMysql);                
+             }
+        }
+
+        if (request()->has('setor_id') && !empty(request('setor_id')) ){    
+            $protocolos = $protocolos->where('setor_id', '=', request('setor_id'));
+        }
+
+        if (request()->has('funcionario')){
+            $protocolos = $protocolos->whereHas('user', function ($query) {
+                                                $query->where('name', 'like', '%' . request('funcionario') . '%');
+                                            });
+        }
+
+        if (request()->has('protocolo_tipo_id') && !empty(request('protocolo_tipo_id')) ){    
+            $protocolos = $protocolos->where('protocolo_tipo_id', '=', request('protocolo_tipo_id'));
+        }
+
+        if (request()->has('protocolo_situacao_id') && !empty(request('protocolo_situacao_id')) ){    
+            $protocolos = $protocolos->where('protocolo_situacao_id', '=', request('protocolo_situacao_id'));
+        }
+
+        // leituraProtocolo p s t
+        // caso t, todos, é sem filtro algum
+        // $user = Auth::user();
+        // // filtra todos que pertencem (foram criados) pelo funcionário que está logado
+        // if ($user->leituraProtocolo == 'p'){
+        //     $protocolos = $protocolos->where('user_id', '=', $user->id);
+        // }
+        // // filtra para mostrar todos que foram criados pelo(s) funcionário(s) do setor do funcionário logado
+        // if ($user->leituraProtocolo == 's'){
+        //     $protocolos = $protocolos->where('setor_id', '=', $user->setor->id);
+        // }
+
+        // ordena
+        $protocolos = $protocolos->orderBy('id', 'desc');
+
+        // se a requisição tiver um novo valor para a quantidade
+        // de páginas por visualização ele altera aqui
+        if(request()->has('perpage')) {
+            session(['perPage' => request('perpage')]);
+        }
+
+        // consulta a tabela perpage para ter a lista de
+        // quantidades de paginação
+        $perpages = Perpage::orderBy('valor')->get();
+
+        // paginação
+        $protocolos = $protocolos->paginate(session('perPage', '5'))->appends([
+            'dtainicio' => request('dtainicio'),
+            'dtafinal' => request('dtafinal'),                   
+            'id_protocolo' => request('id_protocolo'),                   
+            'setor_id' => request('setor_id'),                   
+            ]);
+
+        // setores
+        $setores = Setor::orderBy('descricao', 'asc')->get();
+
+        // Tipos de protocolo
+        $protocolotipos = ProtocoloTipo::orderBy('descricao', 'asc')->get();
+
+        // Situacoes
+        $protocolosituacoes = ProtocoloSituacao::orderBy('descricao', 'asc')->get();
+
+        return view('protocolos.index', compact('protocolos', 'perpages', 'setores', 'protocolotipos', 'protocolosituacoes'));
     }
 
     /**
@@ -188,7 +280,15 @@ class ProtocoloController extends Controller
      */
     public function show($id)
     {
-        //
+        $protocolo = Protocolo::findOrFail($id);
+
+        $anexos = $protocolo->anexos()->orderBy('id', 'desc')->get();
+
+        $tramitacoes = $protocolo->Tramitacaos()->orderBy('id', 'desc')->get();
+
+        $user = Auth::user();
+
+        return view('protocolos.show', compact('protocolo', 'anexos', 'tramitacoes'));
     }
 
     /**
@@ -231,6 +331,16 @@ class ProtocoloController extends Controller
         ]);
 
         $protocolo = Protocolo::findOrFail($id);
+
+        // recebe os dados do usuario logado
+        $user = Auth::user();
+
+        // validar acesso
+        //verifica se o usuário logado é dono do arquivo
+        if ($protocolo->user->id != $user->id) {
+            abort(403, 'Acesso negado. Esse protocolo não é seu.');
+        }
+
             
         $protocolo->update($request->all());
         
@@ -252,8 +362,18 @@ class ProtocoloController extends Controller
 
     public function concluir(Request $request, $id)
     {
+        
 
         $protocolo = Protocolo::findOrFail($id);
+
+        // recebe os dados do usuario logado
+        $user = Auth::user();
+
+        // validar acesso
+        //verifica se o usuário logado é dono do arquivo
+        if ($protocolo->user->id != $user->id) {
+            abort(403, 'Acesso negado. Esse protocolo não é seu.');
+        }
 
         $input = $request->all();
 
@@ -269,5 +389,34 @@ class ProtocoloController extends Controller
         //dd($protocolo);
 
         return redirect(route('protocolos.edit', $id));
-    }    
+    } 
+
+        /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function reabrir($id)
+    {
+        $protocolo = Protocolo::findOrFail($id);
+
+        // recebe os dados do usuario logado
+        $user = Auth::user();
+
+        // validar acesso
+        //verifica se o usuário logado é dono do arquivo
+        if ($protocolo->user->id != $user->id) {
+            abort(403, 'Acesso negado. Esse protocolo não é seu.');
+        }
+
+        $protocolo->concluido_em = null;
+        $protocolo->concluido_mensagem = '';
+        $protocolo->concluido = 'n';
+
+        $protocolo->save();
+
+        return redirect(route('protocolos.edit', $id));
+    }      
 }

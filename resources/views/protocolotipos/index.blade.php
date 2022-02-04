@@ -25,7 +25,7 @@
   @endif
   <div class="btn-group py-1" role="group" aria-label="Opções">
     @can('protocolotipo-create', Auth::user())
-    <a href="{{ route('protocolotipos.create') }}" class="btn btn-secondary btn-sm" role="button"><i class="bi bi-person-plus-fill"></i> Novo Registro</a>
+    <a href="{{ route('protocolotipos.create') }}" class="btn btn-secondary btn-sm" role="button"><i class="bi bi-plus-circle"></i> Novo Registro</a>
     @endcan
     <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#modalFilter"><i class="bi bi-funnel"></i> Filtrar</button>
     @can('protocolotipo-export', Auth::user())

@@ -21,14 +21,23 @@ Faz uso também das seguintes bibliotecas:
 - Oferecer uma opção segura para tramitação de documentos digitais entre funcionários e quando possível abolir a tramitação dos documentos físicos
 - Oferecer estatísticas sobre todo processo de tramitação de documentos entre setores, podendo, por exemplo, saber a média de tempo de conclusão dos protolos, dentre outros a serem desenvolvidos
 
-# Regras
+## Regras
 
-- A edição do protocolo só pode ser feita pelo funcionário que criou o protocolo
+### Protocolo
+
+- A edição do protocolo só pode ser feita pelo funcionário que criou o protocolo(1)
 - Somente o funcionário proprietário do protocolo pode concluir e reabrir um protocolo
 - Não foi implementado a exclusão do protocolo, para essa tarefa deve-se concluir e escolher a opção cancelado na tela do protocolo, somente o funcionário que criou o protocolo pode fazer isso
+- O acesso aos dados do protocolo podem ser feitos pelo funcionário que criou o protocolo e pelo(s) funcionário(s) que o recebeu(ram) esse protocolo por tramitação, considerando (1), o nível de acesso de tramitação para esse protocolo se limita a fazer uploads de anexos, marcar como recebido e tramitar novamente o protocolo
+
+### Anexos
 
 - Os anexos só podem ser excluídos pelo funcionário que fez upload do arquivo, tanto no protocolo como na tramitação
 - Os anexos podem ser incluídos ao protocolo na tela de edição de protocolo e na tela de edição da tramitação
+
+### Tramitações
+
+- Uma tramitação de protocolo só pode ser recebida pelo funcionário que recebeu a tramitação
 
 ## Requisitos
 

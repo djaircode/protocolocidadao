@@ -36,7 +36,16 @@
                 @if (!Auth::guest())
                 <ul class="navbar-nav mr-auto">                   
                     <li class="nav-item">
-                        <a class="nav-link" href="#">TO-DO</a>
+                        <a class="nav-link" href="{{ route('protocolos.index') }}">Protocolos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('tramitacoes.index') }}">Tramitações</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('users.index') }}">Funcionários</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('setores.index') }}">Setores</a>
                     </li>
 
                     <li class="nav-item dropdown">

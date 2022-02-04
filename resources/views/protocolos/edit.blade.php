@@ -32,7 +32,6 @@
   </nav>
 </div>
 
-
 <div class="container">
   @if(Session::has('edited_protocolo'))
   <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -50,17 +49,17 @@
     </button>
   </div>
   @endif
-  @if ($errors->has('user_id_destino'))
+  @if ($errors->has('funcionario_tramitacao_id'))
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <strong>Erro!</strong>  {{ $errors->first('user_id_destino') }}
+    <strong>Erro!</strong>  {{ $errors->first('funcionario_tramitacao_id') }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   @endif
-  @if ($errors->has('setor_id_destino'))
+  @if ($errors->has('setor_tramitacao_id'))
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <strong>Erro!</strong>  {{ $errors->first('setor_id_destino') }}
+    <strong>Erro!</strong>  {{ $errors->first('setor_tramitacao_id') }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -499,7 +498,7 @@
             <input type="hidden" id="protocolo_id" name="protocolo_id" value="{{ $protocolo->id }}">
 
             <div class="form-group">
-              <label for="funcionario_tramitacao">Funcionário</label>
+              <label for="funcionario_tramitacao">Funcionário <strong  class="text-danger">(*)</strong></label>
               <input type="text" class="form-control typeahead" name="funcionario_tramitacao" id="funcionario_tramitacao" autocomplete="off">
               <input type="hidden" id="funcionario_tramitacao_id" name="funcionario_tramitacao_id">
               <input type="hidden" id="setor_tramitacao_id" name="setor_tramitacao_id">
@@ -517,7 +516,7 @@
             </div>
 
             <div class="form-group">
-              <label for="mensagem">Mensagem</label>
+              <label for="mensagem">Mensagem <strong class="text-warning">(Opcional)</strong></label>
               <textarea class="form-control" name="mensagem" rows="3"></textarea> 
             </div>
 

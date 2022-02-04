@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProtocoloTramitacao;
-use App\\Models\Protocolo;
+use App\Models\Tramitacao;
+use App\Models\Protocolo;
+use App\Models\Anexo;
 
-use App\\Models\Perpage;
+
+use App\Models\Perpage;
 
 use Response;
 
@@ -71,7 +73,51 @@ class TramitacaoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+          'funcionario_tramitacao_id' => 'required',
+          'setor_tramitacao_id' => 'required',
+          'protocolo_id' => 'required',
+        ],
+        [
+            'funcionario_tramitacao_id.required' => 'Escolha o funcionário para tramitação',
+            'setor_tramitacao_id.required' => 'Escolha o funcionário e o setor para tramitação',
+            'protocolo_id.required' => 'Erro no sistema, protocolo não selecionado para tramitação',
+        ]);
+
+        // recebe os dados do request
+        $input_tramitacao = $request->all();
+
+        // atualiza o protocolo como em tramitação
+        $user = Auth::user();
+        $protocolo = Protocolo::findOrFail($input_tramitacao['protocolo_id']);
+        $protocolo->protocolo_situacao_id = 2; //Em Tramitação
+        $protocolo->save();
+
+        // ajusta os dados do request
+        $input_tramitacao['user_id_origem'] = $user->id;
+        $input_tramitacao['setor_id_origem'] = $user->setor->id;
+        $input_tramitacao['user_id_destino'] = $input_tramitacao['funcionario_tramitacao_id'];
+        $input_tramitacao['setor_id_destino'] = $input_tramitacao['setor_tramitacao_id'];
+        $input_tramitacao['recebido'] = 'n';
+        $input_tramitacao['tramitado'] = 'n';
+        $tramitacao = Tramitacao::create($input_tramitacao); //salva
+
+        // controle de acesso ao protocolo
+        $tramitacao->userDestino->protocolos()->detach($protocolo); // remove o acesso se tiver
+        $tramitacao->userDestino->protocolos()->attach($protocolo); // refaz o acesso
+
+        // dar acesso a todos os anexos ao usuário tramitado, caso ele não tenha ainda acesso
+        // remove todos acessos do usario destino, para refazer todos acessos
+        $tramitacao->userDestino->anexos()->detach();
+
+        $anexos = $protocolo->anexos()->get();
+        foreach ($anexos as $anexo) {
+            $tramitacao->userDestino->anexos()->attach($anexo);    
+        }
+
+        Session::flash('create_protocolotramitacao', 'Tramitação inserida com sucesso!');
+
+        return Redirect::route('protocolos.edit', $input_tramitacao['protocolo_id']);
     }
 
     /**
