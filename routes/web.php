@@ -34,7 +34,7 @@ Route::group(['prefix' => 'admin','namespace' => 'Auth'],function(){
 
 Route::get('/', 'HomeController@index')->name('index');
 
-Route::get('/home', 'HomeController@index')->name('index');
+Route::get('/home', 'HomeController@index')->name('home');
 
 Route::prefix('admin')->namespace('Admin')->group(function () {
     /*  Operadores */
@@ -82,7 +82,10 @@ Route::resource('/protocolos', 'ProtocoloController');
 Route::get('anexos/{codigoanexo}/download', 'AnexoController@download')->name('anexos.download');
 Route::resource('/anexos', 'AnexoController')->only(['store', 'destroy',]);
 
-/* TRAMITAÇÃO DOS PROTOCOLOS */
 Route::get('/tramitacoes/export/csv', 'TramitacaoController@exportcsv')->name('tramitacoes.export.csv');
 Route::get('/tramitacoes/export/pdf', 'TramitacaoController@exportpdf')->name('tramitacoes.export.pdf');
 Route::resource('/tramitacoes', 'TramitacaoController');
+
+/* TRAMITAÇÃO DOS PROTOCOLOS */
+Route::resource('/protocolostramitacoes', 'ProtocoloTramitacaoController')->only(['store', 'destroy']);
+

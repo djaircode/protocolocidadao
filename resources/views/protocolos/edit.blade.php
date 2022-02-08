@@ -213,94 +213,92 @@
 
 
 
-  <div class="container">
+<div class="container">
 
-        <div class="container bg-primary text-light">
-          <p class="text-center"><strong>Anexos</strong></p>
+    <div class="container bg-primary text-light">
+      <p class="text-center"><strong>Anexos</strong></p>
+    </div>
+    @if ($protocolo->concluido === 'n')
+    <div class="container">
+      <form method="POST" action="{{ route('anexos.store') }}" class="form-inline" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" id="protocolo_id" name="protocolo_id" value="{{ $protocolo->id }}">
+        <div class="form-group p-2">
+          <label for="arquivos">Arquivos</label>
+          <input type="file" class="form-control-file" id="arquivos" name="arquivos[]" multiple data-show-upload="true" data-show-caption="true">
         </div>
-        @if ($protocolo->concluido === 'n')
-        <div class="container">
-          <form method="POST" action="{{ route('anexos.store') }}" class="form-inline" enctype="multipart/form-data">
-            @csrf
-            <input type="hidden" id="protocolo_id" name="protocolo_id" value="{{ $protocolo->id }}">
-            <div class="form-group p-2">
-              <label for="arquivos">Arquivos</label>
-              <input type="file" class="form-control-file" id="arquivos" name="arquivos[]" multiple data-show-upload="true" data-show-caption="true">
-            </div>
-            <div class="form-group py-2">
-              <button type="submit" class="btn btn-primary"><i class="bi bi-file-earmark-plus-fill"></i> Anexar Arquivo</button>
-              <button type="button" class="btn btn-secondary" data-toggle="popover" title="Informações sobre o arquivo" data-placement="right" data-content="Somente são aceitos os seguintes formatos para o arquivo: pdf, doc, docx, ppt, pptx, xls, xlsx, png, jpg, jpeg ou rtf. Cada arquivo não pode ter mais de 10Mb. Você pode adicionar múltiplos arquivos de uma só vez."><i class="bi bi-info-square"></i> Info</button>
-            </div>
-          </form>  
+        <div class="form-group py-2">
+          <button type="submit" class="btn btn-primary"><i class="bi bi-file-earmark-plus-fill"></i> Anexar Arquivo</button>
+          <button type="button" class="btn btn-secondary" data-toggle="popover" title="Informações sobre o arquivo" data-placement="right" data-content="Somente são aceitos os seguintes formatos para o arquivo: pdf, doc, docx, ppt, pptx, xls, xlsx, png, jpg, jpeg ou rtf. Cada arquivo não pode ter mais de 10Mb. Você pode adicionar múltiplos arquivos de uma só vez."><i class="bi bi-info-square"></i> Info</button>
         </div>
-        @endif
+      </form>  
+    </div>
+    @endif
 
-        <div class="container">
-          @if(Session::has('create_anexo'))
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Info!</strong>  {{ session('create_anexo') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          @endif
-          @if(Session::has('delete_anexo'))
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Info!</strong>  {{ session('delete_anexo') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          @endif
-          @if($errors->has('arquivos.*'))
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong><b><i class="bi bi-exclamation-diamond"></i> Erro! </b></strong> {{ $errors->first('arquivos.*') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          @endif
-          @if ( !$anexos->isEmpty() ) 
-          <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Data</th>
-                        <th scope="col">Hora</th>
-                        <th scope="col">Arquivo</th>
-                        <th scope="col">Enviado por</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($anexos as $anexo)
-                    <tr>
-                        <td>{{ $anexo->created_at->format('d/m/Y')  }}</td>
-                        <td>{{ $anexo->created_at->format('H:i') }}</td>
-                        <td><a href="{{ route('anexos.download', $anexo->codigoAnexoPublico) }}">{{ $anexo->arquivoNome }}</a></td>
-                        <td>{{ $anexo->user->name }}</td>
-                        <td>
-                          @if ($anexo->user->id === Auth::user()->id)
-                            @if ($protocolo->concluido === 'n')
-                            <form method="post" action="{{route('anexos.destroy', $anexo->id)}}"  onsubmit="return confirm('Você tem certeza que quer excluir esse arquivo?');">
-                              @csrf
-                              @method('DELETE')  
-                              <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                            </form>
-                            @endif
-                          @endif  
-                        </td>                        
-                    </tr>    
-                    @endforeach                                                 
-                </tbody>
-            </table>
-          </div>
-          @else
-            <p>Nenhum anexo encontrado</p>
-          @endif
-        </div>
-        
-    
+    <div class="container">
+      @if(Session::has('create_anexo'))
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Info!</strong>  {{ session('create_anexo') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      @endif
+      @if(Session::has('delete_anexo'))
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Info!</strong>  {{ session('delete_anexo') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      @endif
+      @if($errors->has('arquivos.*'))
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong><b><i class="bi bi-exclamation-diamond"></i> Erro! </b></strong> {{ $errors->first('arquivos.*') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      @endif
+      @if ( !$anexos->isEmpty() ) 
+      <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Data</th>
+                    <th scope="col">Hora</th>
+                    <th scope="col">Arquivo</th>
+                    <th scope="col">Enviado por</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($anexos as $anexo)
+                <tr>
+                    <td>{{ $anexo->created_at->format('d/m/Y')  }}</td>
+                    <td>{{ $anexo->created_at->format('H:i') }}</td>
+                    <td><a href="{{ route('anexos.download', $anexo->codigoAnexoPublico) }}">{{ $anexo->arquivoNome }}</a></td>
+                    <td>{{ $anexo->user->name }}</td>
+                    <td>
+                      @if ($anexo->user->id === Auth::user()->id)
+                        @if ($protocolo->concluido === 'n')
+                        <form method="post" action="{{route('anexos.destroy', $anexo->id)}}"  onsubmit="return confirm('Você tem certeza que quer excluir esse arquivo?');">
+                          @csrf
+                          @method('DELETE')  
+                          <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                        </form>
+                        @endif
+                      @endif  
+                    </td>                        
+                </tr>    
+                @endforeach                                                 
+            </tbody>
+        </table>
+      </div>
+      @else
+        <p>Nenhum anexo encontrado</p>
+      @endif
+    </div>  
   </div>
 
 
@@ -493,7 +491,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <form method="POST" action="{{ route('tramitacoes.store') }}">
+          <form method="POST" action="{{ route('protocolostramitacoes.store') }}">
             @csrf
             <input type="hidden" id="protocolo_id" name="protocolo_id" value="{{ $protocolo->id }}">
 

@@ -119,7 +119,14 @@ class AnexoController extends Controller
 
         Session::flash('create_anexo', 'Anexo salvo com sucesso!');
 
-        return Redirect::route('protocolos.edit', $request['protocolo_id']);        
+
+        if (request()->has('tramitacao_id')){
+            return Redirect::route('tramitacoes.edit', $request['tramitacao_id']);
+        } else {
+            return Redirect::route('protocolos.edit', $request['protocolo_id']);    
+        }    
+
+                
     }
 
     /**
