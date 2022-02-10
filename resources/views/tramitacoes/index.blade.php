@@ -7,21 +7,14 @@
       <li class="breadcrumb-item active" aria-current="page"><a href="{{ route('tramitacoes.index') }}">Lista de Tramitações</a></li>
     </ol>
   </nav>
-
-
   <div class="btn-group py-1" role="group" aria-label="Opções">
     <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#modalFilter"><i class="bi bi-funnel"></i> Filtrar</button>
     <div class="btn-group" role="group">
       <button id="btnGroupDropOptions" type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-print"></i> Relatórios
       </button>
-      <div class="dropdown-menu" aria-labelledby="btnGroupDropOptions">
-        <a class="dropdown-item" href="#" id="btnExportarCSV"><i class="bi bi-file-earmark-spreadsheet-fill"></i> Exportar Planilha</a>
-        <a class="dropdown-item" href="#" id="btnExportarPDF"><i class="bi bi-file-pdf-fill"></i> Exportar PDF</a>
-      </div>
     </div>
   </div>
-
   <div class="table-responsive">
     <table class="table table-striped">
         <thead>
@@ -50,7 +43,6 @@
                 <td class="text-right">
                   <strong>{{$tramitacao->protocolo->id}}</strong>
                 </td>
-
                 @switch($tramitacao->protocolo->protocoloSituacao->id)
                   @case(1)
                       <td><span class="badge badge-pill badge-warning">Aberto</span></td>
@@ -97,9 +89,16 @@
                 </td>
                 @endif
                 <td>
+                  @if (Auth::user()->id == $tramitacao->userDestino->id)
                   <div class="btn-group" role="group">
-                    <a href="{{route('tramitacoes.edit', $tramitacao->id)}}" class="btn btn-info btn-sm" role="button"><i class="bi bi-eye"></i></a>
+                    <a href="{{route('tramitacoes.edit', $tramitacao->id)}}" class="btn btn-info btn-sm" role="button"><i class="bi bi-pencil-square"></i></a>
                   </div>
+                  @endif
+                  @if (Auth::user()->id == $tramitacao->userOrigem->id)
+                  <div class="btn-group" role="group">
+                    <a href="{{route('tramitacoes.show', $tramitacao->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-eye"></i></a>
+                  </div>
+                  @endif
                 </td>
             </tr>    
             @endforeach                                                 

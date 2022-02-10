@@ -31,23 +31,16 @@
     </ol>
   </nav>
 </div>
-
-
-
-
-
 <div class="container">
-  @if(Session::has('edited_protocolotipo'))
-  <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <strong>Info!</strong>  {{ session('edited_protocolotipo') }}
+  @if(Session::has('recebe_tramitacao'))
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Info!</strong>  {{ session('recebe_tramitacao') }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   @endif
 </div>
-
-
 <div class="container">
   @if(Session::has('create_tramitacao'))
   <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -59,9 +52,7 @@
   </div>
   @endif
 </div>
-
 <div class="container py-2" id="tramitacao">
-
   <div class="card">
       <div class="card-header">
         <div class="row">
@@ -84,8 +75,6 @@
               </div>
             </div>
           </li>
-
-
           <li class="list-group-item">
             <div class="container">
               <div class="row">           
@@ -100,21 +89,19 @@
               </div>
             </div>
           </li>
-
-
           <li class="list-group-item">          
             <div class="container">
               <div class="row">
                 <div class="col">
                   @if ($tramitacao->recebido == 's')
-                    <strong>Recebido em {{$tramitacao->recebido_em->format('d/m/Y')}}</strong>
+                    <h4 class="p-3 mb-2 bg-success text-white text-center">Recebido em {{$tramitacao->recebido_em->format('d/m/Y')}}</h4>
                   @else
                     <h4><span class="badge badge-danger">Não Recebido</span></h4>
                   @endif
                 </div>
                 <div class="col">
-                  @if ($tramitacao->recebido == 's')
-                    <strong>Tramitado em {{$tramitacao->tramitado_em->format('d/m/Y')}}</strong>
+                  @if ($tramitacao->tramitado == 's')
+                    <h4 class="p-3 mb-2 bg-success text-white text-center">Tramitado em {{$tramitacao->tramitado_em->format('d/m/Y')}}</h4>
                   @else
                     <h4><span class="badge badge-warning">Não Tramitado</span></h4>
                   @endif
@@ -122,51 +109,36 @@
               </div>
             </div>
           </li>
-
           @if ( strlen($tramitacao->mensagem) > 0 )
           <li class="list-group-item">
-            <div class="container p-2 mb-2 bg-light text-dark">       
-              <p><strong>Mensagem:</strong> {{ $tramitacao->mensagem }}</p>
+            <div class="container">       
+              <p class=" p-2 mb-2 bg-light text-dark"><strong>Mensagem:</strong> {{ $tramitacao->mensagem }}</p>
             </div>
           </li>
           @endif
-
           @if ( strlen($tramitacao->mensagemRecebido) > 0 )
           <li class="list-group-item">
             <div class="container">       
-              <p><strong>Mensagem de recebimento:</strong> {{ $tramitacao->mensagemRecebido }}</p>
+              <p class=" p-2 mb-2 bg-light text-dark"><strong>Mensagem de recebimento:</strong> {{ $tramitacao->mensagemRecebido }}</p>
             </div>
           </li>
           @endif
-
+          @if (($tramitacao->recebido == 'n') and ($tramitacao->protocolo->concluido == 'n'))
           <li class="list-group-item">  
-            <div class="container py-2 text-center" id="opcoestramitacoes">
-              
-
-              <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalReceberProtocolo">
+            <div class="container py-2 text-center" id="opcoestramitacoes">             
+              <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalReceberTramitacao">
                 <i class="bi bi-hand-thumbs-up"></i> Receber
               </button>
-
-
-
               <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalTramitarProtocolo">
                 <i class="bi bi-arrow-clockwise"></i> Tramitar 
               </button>    
-
-
             </div>
           </li>
+          @endif
         </ul>
       </div>  
     </div>
 </div>
-
-
-
-
-
-
-
 <div class="container" id="protocolo">
   <div class="container">
     <form>
@@ -212,7 +184,6 @@
         <label for="conteudo">Conteúdo/Descrição</label>
         <textarea class="form-control" name="conteudo" rows="5" readonly>{{ $protocolo->conteudo }}</textarea>    
       </div>
-
       @if ($protocolo->concluido === 'n')
         <div class="form-group">
           <label for="situacao">Situação</label>
@@ -240,13 +211,11 @@
       @endif
     </form>
   </div>
-
-
-<div class="container">
+  <div class="container">
     <div class="container bg-primary text-light">
       <p class="text-center"><strong>Anexos</strong></p>
     </div>
-    @if ($protocolo->concluido === 'n')
+     @if (($tramitacao->recebido == 'n') and ($tramitacao->protocolo->concluido == 'n'))
     <div class="container">
       <form method="POST" action="{{ route('anexos.store') }}" class="form-inline" enctype="multipart/form-data">
         @csrf
@@ -263,7 +232,6 @@
       </form>  
     </div>
     @endif
-
     <div class="container">
       @if(Session::has('create_anexo'))
       <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -310,7 +278,7 @@
                     <td>{{ $anexo->user->name }}</td>
                     <td>
                       @if ($anexo->user->id === Auth::user()->id)
-                        @if ($protocolo->concluido === 'n')
+                        @if (($tramitacao->recebido == 'n') and ($tramitacao->protocolo->concluido == 'n'))
                         <form method="post" action="{{route('anexos.destroy', $anexo->id)}}"  onsubmit="return confirm('Você tem certeza que quer excluir esse arquivo?');">
                           @csrf
                           @method('DELETE')  
@@ -330,17 +298,16 @@
     </div>  
   </div>
 </div>
-
-
 <div class="container">
   <div class="float-right">
+    <a href="{{ url('/') }}" class="btn btn-secondary" role="button"><i class="bi bi-clipboard-data"></i> Painel de Controle</a>
     <a href="{{ route('tramitacoes.index') }}" class="btn btn-primary" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a>
   </div>
 </div>
 <br>
 
 
-  @if ($protocolo->concluido === 'n')
+
   <!-- Janela para tramitar o protocolo -->
   <div class="modal fade" id="modalTramitarProtocolo" tabindex="-1" role="dialog" aria-labelledby="JanelaFiltro" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -390,7 +357,42 @@
       </div>
     </div>
   </div>
-  @endif
+  
+
+
+
+    <!-- Janela para concluir a tramitacao -->
+  <div class="modal fade" id="modalReceberTramitacao" tabindex="-1" role="dialog" aria-labelledby="JanelaFiltro" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-hand-thumbs-up"></i> Recebimento de Protocolo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="{{ route('tramitacoes.update', $tramitacao->id) }}">
+            @csrf
+            @method('PUT')
+            <div class="form-group">
+              <label for="concluido_mensagem">Mensagem de Recebimento: <strong class="text-warning">(Opcional)</strong></label>
+              <textarea class="form-control" name="concluido_mensagem" rows="4"></textarea>      
+            </div>
+            <div class="p-3 alert alert-warning" role="alert">
+              Ao receber essa tramitação não será mais possível anexar arquivos ou fazer outras tramitações desse protocolo.
+            </div>  
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary"><i class="bi bi-hand-thumbs-up"></i> Confirmar Recebimento?</button>
+            </div>
+          </form>
+        </div>     
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="bi bi-x-square"></i> Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 @endsection
 

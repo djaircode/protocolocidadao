@@ -31,7 +31,6 @@
     </ol>
   </nav>
 </div>
-
 <div class="container">
   @if(Session::has('edited_protocolo'))
   <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -207,14 +206,7 @@
     @endif
     </div>
   </div>
-
-
-
-
-
-
-<div class="container">
-
+  <div class="container">
     <div class="container bg-primary text-light">
       <p class="text-center"><strong>Anexos</strong></p>
     </div>
@@ -234,7 +226,6 @@
       </form>  
     </div>
     @endif
-
     <div class="container">
       @if(Session::has('create_anexo'))
       <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -300,14 +291,11 @@
       @endif
     </div>  
   </div>
-
-
   <div class="container">
     <div class="container bg-primary text-light">
       <p class="text-center"><strong>Tramitações</strong></p>
     </div>
   </div>
-
   @if ($protocolo->concluido === 'n')
   <div class="container text-center">
   <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalTramitarProtocolo">
@@ -316,7 +304,6 @@
   </div>
   <br>
   @endif
-
   @foreach($tramitacoes as $tramitacao)
   <div class="container py-2">   
     <div class="card">
@@ -365,7 +352,6 @@
             </div>
           </li>
           </ul>
-
           <div class="collapse" id="collapseTramitacao{{$tramitacao->id}}">
             <div class="card card-body">
               @if ( strlen($tramitacao->mensagem) > 0 )
@@ -386,14 +372,11 @@
               </div>
             </div>
           </div>
-            
         </div>  
       </div>  
     </div>
   @endforeach
-
   <br>
-
   @if ($protocolo->concluido === 's')
   <div class="container">
     <div class="container bg-primary text-light">
@@ -407,18 +390,13 @@
   </div>
   @endif
   <br>
-
   <div class="container">
     <div class="float-right">
+      <a href="{{ url('/') }}" class="btn btn-secondary" role="button"><i class="bi bi-clipboard-data"></i> Painel de Controle</a>
       <a href="{{ route('protocolos.index') }}" class="btn btn-primary" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a>
     </div>
   </div>
   <br>
-
-
-
-
-
   @if ($protocolo->concluido === 'n')
   <!-- Janela para concluir o protocolo -->
   <div class="modal fade" id="modalConcluirProtocolo" tabindex="-1" role="dialog" aria-labelledby="JanelaFiltro" aria-hidden="true">
@@ -459,26 +437,6 @@
     </div>
   </div>
   @endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   @if ($protocolo->concluido === 'n')
   <!-- Janela para tramitar o protocolo -->
   <div class="modal fade" id="modalTramitarProtocolo" tabindex="-1" role="dialog" aria-labelledby="JanelaFiltro" aria-hidden="true">
@@ -494,14 +452,12 @@
           <form method="POST" action="{{ route('protocolostramitacoes.store') }}">
             @csrf
             <input type="hidden" id="protocolo_id" name="protocolo_id" value="{{ $protocolo->id }}">
-
             <div class="form-group">
               <label for="funcionario_tramitacao">Funcionário <strong  class="text-danger">(*)</strong></label>
               <input type="text" class="form-control typeahead" name="funcionario_tramitacao" id="funcionario_tramitacao" autocomplete="off">
               <input type="hidden" id="funcionario_tramitacao_id" name="funcionario_tramitacao_id">
               <input type="hidden" id="setor_tramitacao_id" name="setor_tramitacao_id">
             </div>
-
             <div class="form-row">
               <div class="form-group col-md-6">
                 <label for="funcionario_tramitacao_setor">Setor</label>
@@ -512,14 +468,11 @@
                 <input type="text" class="form-control" name="funcionario_tramitacao_email" id="funcionario_tramitacao_email" readonly tabIndex="-1" placeholder="">
               </div>
             </div>
-
             <div class="form-group">
               <label for="mensagem">Mensagem <strong class="text-warning">(Opcional)</strong></label>
               <textarea class="form-control" name="mensagem" rows="3"></textarea> 
             </div>
-
             <button type="submit" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i> Tramitar</button>
-
           </form>  
         </div>     
         <div class="modal-footer">
@@ -529,10 +482,6 @@
     </div>
   </div>
   @endif
-
-
-
-
   @if ($protocolo->concluido === 's' )
   <div class="modal fade" id="modalReabrirprotocolo" tabindex="-1" role="dialog" aria-labelledby="janelaReabrirProtocolo" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -561,8 +510,6 @@
   @endif
 
 @endsection
-
-
 @section('script-footer')
 <script src="{{ asset('js/typeahead.bundle.min.js') }}"></script>
 <script>

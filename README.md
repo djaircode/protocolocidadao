@@ -16,14 +16,14 @@ Faz uso também das seguintes bibliotecas:
 
 ## Objetivos
 
-- Permitir localizar com facilidade onde se encontram os documentos físicos entre os setores, informando qual funcionário recebeu, quando e pra onte ele tramitou
+- Permitir localizar com facilidade onde se encontram os documentos físicos entre os setores, informando qual funcionário recebeu, quando e pra onde ele tramitou (transferiu ou enviou) o documento
 - Permitir que informações sejam agregadas aos protocolos/tramitações através de textos ou arquivos anexados
 - Oferecer uma opção segura para tramitação de documentos digitais entre funcionários e quando possível abolir a tramitação dos documentos físicos
 - Oferecer estatísticas sobre todo processo de tramitação de documentos entre setores, podendo, por exemplo, saber a média de tempo de conclusão dos protolos, dentre outros a serem desenvolvidos
 
 ## Regras
 
-### Protocolo
+### Protocolos
 
 - A edição do protocolo só pode ser feita pelo funcionário que criou o protocolo(1)
 - Somente o funcionário proprietário do protocolo pode concluir e reabrir um protocolo
@@ -34,10 +34,21 @@ Faz uso também das seguintes bibliotecas:
 
 - Os anexos só podem ser excluídos pelo funcionário que fez upload do arquivo, tanto no protocolo como na tramitação
 - Os anexos podem ser incluídos ao protocolo na tela de edição de protocolo e na tela de edição da tramitação
+- Só são aceitos arquivos de anexos nos seguintes formatos: documentos do office (xls, doc, ppt...etc), documentos em pdf e alguns formatos de imagens, jpg e png. No arquivo AnexoController essas opções podem ser modificadas, lembrando que em várias blades do sistemas possuem as especificações ao usuário de quais formatos de arquivos ele pode enviar.
+- Nesse meu código cada anexo é limitado ao tamanho máximo de 5M, pode ser alterado no arquivo AnexoController. Obsv.: o servidor apache por padrão de instalação limita o tamanho máximo do arquivo de upload para 2M, portanto, para usar minhas configurações aqui apresentado é necessário alterar essa configuração
+- É possível fazer o upload de multiplos arquivos, o tamanho máximo de todos arquivos juntos enviados também é delimitado pelo servidor
 
 ### Tramitações
 
-- Uma tramitação de protocolo só pode ser recebida pelo funcionário que recebeu a tramitação
+- **A tramitação de um protocolo dentro desse sistema é uma classe responsável por transmitir as informações de um protocolo de um funcionário/setor para outro**
+- O termo "tramitar" significa enviar, distribuir ou compartilhar nesse contexto. Foi escolhido para esse sistema a palavra tramitar por ser já uma nomenclatura de uso comum entre setores, embora eu pessoalmente ache que o termo "compartilhar" seria mais aceito, fácil de entender e explicar.
+- A Tramitação é uma extensão da classe Protocolo, essa divisão se deve ao fato que nesse sistema um protocolo pode realizar nenhuma ou várias tramitações.
+- É possível tramitar o protocolo de duas maneiras no sistema: na tela de criação/edição de um protocolo e na tela de (edição )tramitação de um protocolo
+- O funcionário que criou o protocolo pode fazer quantas tramitações necessárias para outros funcionários (ou nenhuma)
+- Quando é tramitado um protocolo a um determinado funcionário esse possui a opção de tramitar para um outro (ou vários) funcionário
+- Toda vez que ocorre uma tramitação, o funcionário que o recebe ganha acesso a visualização do protocolo e respectivos anexos, porém esse funcionário não poderá alterar os dados do protocolo.
+- Uma tramitação de protocolo só pode ser marcada como recebida pelo funcionário definido na tramitação
+- Ao receber a tramitação o funcionário não poderá mais anexar arquivos ou tramitar novamente essa tramitação. Se o funcionário receber o protocolo ele não poderá mais tramitar (enviar, compartilhar, distribuir) esse protocolo para outra pessoa
 
 ## Requisitos
 
@@ -53,9 +64,6 @@ Os requisitos para executar esse sistema pode ser encontrado na [documentação 
 - PDO PHP Extension
 - Tokenizer PHP Extension
 - XML PHP Extension
-
-## Funcionalidades
-
 
 ## Contribuições
 

@@ -244,7 +244,13 @@ class TramitacaoController extends Controller
      */
     public function show($id)
     {
-        //
+        $tramitacao = Tramitacao::findOrFail($id);
+
+        $protocolo = Protocolo::findOrFail($tramitacao->protocolo->id);
+
+        $anexos = $protocolo->anexos()->orderBy('id', 'desc')->get();
+
+        return view('tramitacoes.show', compact('tramitacao', 'protocolo', 'anexos'));
     }
 
     /**
@@ -273,7 +279,23 @@ class TramitacaoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $tramitacao = Tramitacao::findOrFail($id);
+
+        $input = $request->all();
+
+        $tramitacao->recebido = 's';
+        if (isset($input['concluido_mensagem']) && !empty($input['concluido_mensagem'])){
+                $mensagem = $input['concluido_mensagem'];
+            } else {
+                $mensagem = 'Nenhuma mensagem de recebimento';
+            } 
+        $tramitacao->mensagemRecebido = $mensagem;
+        $tramitacao->recebido_em =  Carbon::now()->toDateTimeString();
+        $tramitacao->save();
+
+        Session::flash('recebe_tramitacao', 'Tramitação recebida com sucesso!');
+
+        return Redirect::route('tramitacoes.edit', $id);
     }
 
     /**

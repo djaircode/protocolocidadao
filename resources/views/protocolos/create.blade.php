@@ -132,6 +132,7 @@
 <br>
 <div class="container">
   <div class="float-right">
+    <a href="{{ url('/') }}" class="btn btn-secondary" role="button"><i class="bi bi-clipboard-data"></i> Painel de Controle</a>
     <a href="{{ route('protocolos.index') }}" class="btn btn-primary" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a>
   </div>
 </div>

@@ -34,7 +34,10 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 @if (!Auth::guest())
-                <ul class="navbar-nav mr-auto">                   
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url('/') }}">Painel de Controle</a>
+                    </li>                  
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('protocolos.index') }}">Protocolos</a>
                     </li>

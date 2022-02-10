@@ -10,8 +10,7 @@
     </ol>
   </nav>
 </div>
-<div class="container">
-  
+<div class="container">  
   <div class="container">
     <form>
       <div class="form-row">
@@ -56,7 +55,6 @@
         <label for="conteudo">Conteúdo/Descrição</label>
         <textarea class="form-control" name="conteudo" rows="5" readonly>{{ $protocolo->conteudo }}</textarea>    
       </div>
-
       @if ($protocolo->concluido === 'n')
         <div class="form-group">
           <label for="situacao">Situação</label>
@@ -84,7 +82,6 @@
       @endif
     </form>
   </div>
-
   <div class="container">
     <div class="row">
       <div class="col-sm">
@@ -122,15 +119,12 @@
       </div> 
     </div>        
    </div>
-
   <div class="container">
     <div class="container bg-primary text-light">
       <p class="text-center"><strong>Tramitações</strong></p>
     </div>
   </div>
-
   <br>
-
   @foreach($tramitacoes as $tramitacao)
   <div class="container py-2">   
     <div class="card">
@@ -179,7 +173,6 @@
             </div>
           </li>
           </ul>
-
           <div class="collapse" id="collapseTramitacao{{$tramitacao->id}}">
             <div class="card card-body">
               @if ( strlen($tramitacao->mensagem) > 0 )
@@ -199,32 +192,17 @@
                 </div>
               </div>
             </div>
-          </div>
-            
+          </div>            
         </div>  
       </div>  
     </div>
     @endforeach
-
   <br>
-
-
-
   <div class="container">
     <div class="float-right">
+      <a href="{{ url('/') }}" class="btn btn-secondary" role="button"><i class="bi bi-clipboard-data"></i> Painel de Controle</a>
       <a href="{{ route('protocolos.index') }}" class="btn btn-primary" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a> 
     </div>
   </div>
-
-
-
 </div>
-
-@endsection
-
-
-@section('script-footer')
-<script>
-
-</script>
 @endsection
