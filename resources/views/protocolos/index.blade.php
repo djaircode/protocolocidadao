@@ -30,15 +30,6 @@
   <div class="btn-group py-1" role="group" aria-label="Opções">
     <a href="{{ route('protocolos.create') }}" class="btn btn-secondary btn-sm" role="button"><i class="bi bi-plus-circle"></i> Novo Registro</a>
     <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#modalFilter"><i class="bi bi-funnel"></i> Filtrar</button>
-    <div class="btn-group" role="group">
-      <button id="btnGroupDropOptions" type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Opções
-      </button>
-      <div class="dropdown-menu" aria-labelledby="btnGroupDropOptions">
-        <a class="dropdown-item" href="#" id="btnExportarCSV"><i class="bi bi-file-earmark-spreadsheet-fill"></i> Exportar Planilha</a>
-        <a class="dropdown-item" href="#" id="btnExportarPDF"><i class="bi bi-file-pdf-fill"></i> Exportar PDF</a>
-      </div>
-    </div>
   </div>
   <div class="table-responsive">
     <table class="table table-striped">
@@ -71,7 +62,6 @@
                 @endif
                 </td>
                 <td>{{$protocolo->protocoloTipo->descricao}}</td>
-
                 @switch($protocolo->protocoloSituacao->id)
                   @case(1)
                       <td><span class="badge badge-pill badge-warning">Aberto</span></td>
@@ -137,7 +127,6 @@
                 <input type="text" class="form-control" id="dtafinal" name="dtafinal" value="{{request()->input('dtafinal')}}" autocomplete="off">
               </div>
             </div>
-
             <div class="form-row">
               <div class="form-group col-md-6">
                 <label for="setor_id">Setor de Origem</label>
@@ -153,7 +142,6 @@
                 <input type="text" class="form-control" id="funcionario" name="funcionario" value="{{request()->input('funcionario')}}">    
               </div>
             </div>
-
             <div class="form-row">
               <div class="form-group col-md-6">
                 <label for="protocolo_tipo_id">Tipo</label>
@@ -174,9 +162,6 @@
                 </select>  
               </div>
             </div>
-
-
-
             <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i> Pesquisar</button>
             <a href="{{ route('protocolos.index') }}" class="btn btn-primary btn-sm" role="button">Limpar</a>
           </form>
@@ -207,14 +192,6 @@ $(document).ready(function(){
         perpage = $(this).find(":selected").val(); 
         
         window.open("{{ route('protocolos.index') }}" + "?perpage=" + perpage,"_self");
-    });
-
-    $('#btnExportarCSV').on('click', function(){
-        window.open("{{ route('protocolos.export.csv') }}","_self");
-    });
-
-    $('#btnExportarPDF').on('click', function(){
-        window.open("{{ route('protocolos.export.pdf') }}","_self");
     });
 
   $('#dtainicio').datepicker({

@@ -59,10 +59,10 @@
                 <td>
                   <div class="btn-group" role="group">
                     @can('setor-edit', Auth::user())
-                    <a href="{{route('setores.edit', $setor->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-pencil-square"></i></a>
+                    <a href="{{route('setores.edit', $setor->id)}}" class="btn btn-info btn-sm" role="button"><i class="bi bi-pencil-square"></i></a>
                     @endcan
                     @can('setor-show', Auth::user())
-                    <a href="{{route('setores.show', $setor->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-trash"></i></a>
+                    <a href="{{route('setores.show', $setor->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-eye"></i></a>
                     @endcan
                   </div>
                 </td>

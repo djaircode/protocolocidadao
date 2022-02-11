@@ -53,10 +53,12 @@
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarConfig" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          Configurações
+                          Ferramentas
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarConfig">
-                          <a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-person-lines-fill"></i> Operadores do Sistema</a>
+                          <a class="dropdown-item" href="{{ route('funcionario.metricas.index') }}"><i class="bi bi-clipboard-data"></i> Minhas Métricas</a>
+                          <a class="dropdown-item" href="{{ route('setor.metricas.index') }}"><i class="bi bi-clipboard-data"></i> Métricas do Setor {{ Auth::user()->setor->descricao }}</a>
+                          <a class="dropdown-item" href="{{ route('anexos.index') }}"><i class="bi bi-folder-check"></i> Lista de Arquivos Anexados</a>
                         </div>
                     </li>                    
                 </ul>

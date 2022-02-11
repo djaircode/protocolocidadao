@@ -14,17 +14,20 @@
 <div class="container">
   <div class="card">
     <div class="card-header">
-      Operador
+      Funcionário
     </div>
     <div class="card-body">
       <ul class="list-group list-group-flush">
         <li class="list-group-item">Nome: {{$user->name}}</li>
         <li class="list-group-item">E-mail: {{$user->email}}</li>
         <li class="list-group-item">Ativo: {{($user->active == 'Y') ? 'Sim' : 'Não'}} </li>
+        <li class="list-group-item">Setor: {{$user->setor->descricao}}</li>
       </ul>
     </div>
     <div class="card-footer text-right">
+      @can('user-delete', Auth::user())
       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalLixeira"><i class="bi bi-trash"></i> Enviar para Lixeira</button>
+      @endcan
       <a href="{{ route('users.index') }}" class="btn btn-primary" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a>      
     </div>
   </div>

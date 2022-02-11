@@ -24,8 +24,11 @@
   </div>
   @endif
   <div class="btn-group py-1" role="group" aria-label="Opções">
+    @can('user-create', Auth::user())
     <a href="{{ route('users.create') }}" class="btn btn-secondary btn-sm" role="button"><i class="bi bi-person-plus-fill"></i> Novo Registro</a>
+    @endcan
     <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#modalFilter"><i class="bi bi-funnel"></i> Filtrar</button>
+    @can('user-export', Auth::user())
     <div class="btn-group" role="group">
       <button id="btnGroupDropOptions" type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="bi bi-gear"></i> Opções
@@ -38,6 +41,7 @@
         <a class="dropdown-item" href="#" id="btnExportarPDF"><i class="bi bi-file-pdf-fill"></i> Exportar PDF</a>
       </div>
     </div>
+    @endcan
   </div>
   <div class="table-responsive">
     <table class="table table-striped">
@@ -65,8 +69,12 @@
                 </td>
                 <td>
                   <div class="btn-group" role="group">
-                    <a href="{{route('users.edit', $user->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-pencil-square"></i></a>
-                    <a href="{{route('users.show', $user->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-trash"></i></a>
+                    @can('user-edit', Auth::user())
+                    <a href="{{route('users.edit', $user->id)}}" class="btn btn-info btn-sm" role="button"><i class="bi bi-pencil-square"></i></a>
+                    @endcan
+                    @can('user-show', Auth::user())
+                    <a href="{{route('users.show', $user->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-eye"></i></a>
+                    @endcan
                   </div>
                 </td>
             </tr>    

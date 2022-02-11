@@ -80,7 +80,7 @@ Route::resource('/protocolos', 'ProtocoloController');
 
 /*ANEXOS DOS PROTOCOLOS*/
 Route::get('anexos/{codigoanexo}/download', 'AnexoController@download')->name('anexos.download');
-Route::resource('/anexos', 'AnexoController')->only(['store', 'destroy',]);
+Route::resource('/anexos', 'AnexoController')->only(['store', 'destroy', 'index', 'show']);
 
 Route::get('/tramitacoes/export/csv', 'TramitacaoController@exportcsv')->name('tramitacoes.export.csv');
 Route::get('/tramitacoes/export/pdf', 'TramitacaoController@exportpdf')->name('tramitacoes.export.pdf');
@@ -88,4 +88,8 @@ Route::resource('/tramitacoes', 'TramitacaoController');
 
 /* TRAMITAÇÃO DOS PROTOCOLOS */
 Route::resource('/protocolostramitacoes', 'ProtocoloTramitacaoController')->only(['store', 'destroy']);
+
+/* TELA DE ANÁLISE MÉTRICAS DOS PROTOCOLOS E TRAMITAÇÕES DO FUNCIONÁRIO LOGADO NO SISTEMA */
+Route::get('/funcionario/metricas', 'FuncionarioMetricasController@index')->name('funcionario.metricas.index');
+Route::get('/setor/metricas', 'SetorMetricasController@index')->name('setor.metricas.index');
 

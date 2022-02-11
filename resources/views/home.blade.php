@@ -70,7 +70,7 @@
 </div>
 
 <div class="container-fluid p-3 mb-2 bg-secondary text-light text-center text-uppercase">
-      <h4><i class="bi bi-hand-thumbs-up"></i> Tramitações a Receber</h4>
+      <h4><i class="bi bi-hand-thumbs-up"></i> Minhas Tramitações a Receber</h4>
 </div>
 <div class="container">
   @if ( !$tramitacoes_a_receber->isEmpty() ) 
@@ -162,7 +162,7 @@
 </div>
 
 <div class="container-fluid p-3 mb-2 bg-secondary text-light text-center text-uppercase">
-      <h4><i class="bi bi-hand-index"></i> Minhas Tramitações Não recebidas</h4>
+      <h4><i class="bi bi-hand-index"></i> Minhas Tramitações Criadas</h4>
 </div>
 <div class="container">
   @if ( !$minhas_tramitacoes->isEmpty() ) 
@@ -255,109 +255,10 @@
 <div class="container-fluid p-3 mb-2 bg-secondary text-light text-center text-uppercase">
       <h4><i class="bi bi-clipboard-data"></i> Minhas Métricas</h4>
 </div>
-<div class="container">
-  <div class="container bg-primary text-light">
-      <h3 class="text-center"><strong>Meus Protocolos</strong></h3>
-  </div>
-</div>
 
-<div class="container p-2">
-  <div class="row justify-content-md-center">
-    <div class="col-4">
-      <div class="card">
-        <div class="card-header text-center">
-          <h4>Total de Protocolos</h4>  
-        </div>
-        <div class="card-body text-center">
-          <h1>20</h1>
-        </div>
-      </div>
-    </div>
-    <div class="col-4">
-      <div class="card">
-        <div class="card-header text-center">
-          <h4>Protocolos em Tramitação</h4>  
-        </div>
-        <div class="card-body text-center">
-          <h1>20</h1>
-        </div>
-      </div>
-    </div>
-    <div class="col-4">
-      <div class="card">
-        <div class="card-header text-center">
-          <h4>Protocolos Concluídos</h4>  
-        </div>
-        <div class="card-body text-center">
-          <h1>20</h1>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="container p-2">  
-  <div class="row justify-content-md-center">
-    <div class="col-4">
-      <div class="card">
-        <div class="card-header text-center">
-          <h4>Protocolos Abertos</h4>  
-        </div>
-        <div class="card-body text-center">
-          <h1>20</h1>
-        </div>
-      </div>
-    </div>
-    <div class="col-4">
-      <div class="card">
-        <div class="card-header text-center">
-          <h4>Protocolos Cancelados</h4>  
-        </div>
-        <div class="card-body text-center">
-          <h1>20</h1>
-        </div>
-      </div>
-    </div>
-  </div>  
-</div>
-
-<div class="container">
-  <div class="container bg-primary text-light">
-      <h3 class="text-center"><strong>Minhas Tramitações</strong></h3>
-  </div>
-</div>
-<div class="container p-2">
-  <div class="row justify-content-md-center">
-    <div class="col-4">
-      <div class="card">
-        <div class="card-header text-center">
-          <h4>Total de Tramitações</h4>  
-        </div>
-        <div class="card-body text-center">
-          <h1>20</h1>
-        </div>
-      </div>
-    </div>
-    <div class="col-4">
-      <div class="card">
-        <div class="card-header text-center">
-          <h4>Tramitações Recebidas</h4>  
-        </div>
-        <div class="card-body text-center">
-          <h1>20</h1>
-        </div>
-      </div>
-    </div>
-    <div class="col-4">
-      <div class="card">
-        <div class="card-header text-center">
-          <h4>Tramitações Não Recebidas</h4>  
-        </div>
-        <div class="card-body text-center">
-          <h1>20</h1>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+  <div class="container p-3 text-center"> 
+    <a href="{{ route('funcionario.metricas.index') }}" class="btn btn-primary btn-lg" role="button"><i class="bi bi-clipboard-data"></i> Minhas Métricas</a>
+    <a href="{{ route('setor.metricas.index') }}" class="btn btn-primary btn-lg" role="button"><i class="bi bi-clipboard-data"></i> Métricas do Meu Setor</a>
+  </div> 
 
 @endsection

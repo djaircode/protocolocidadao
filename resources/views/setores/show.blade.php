@@ -23,7 +23,9 @@
       </ul>
     </div>
     <div class="card-footer text-right">
+      @can('setor-delete', Auth::user())
       <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalLixeira"><i class="bi bi-trash"></i> Enviar para Lixeira</button>
+      @endcan
       <a href="{{ route('setores.index') }}" class="btn btn-primary" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a>      
     </div>
   </div>

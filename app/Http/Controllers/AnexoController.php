@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Protocolo;
 use App\Models\Anexo;
 
+use App\Models\Perpage;
+
 use Response;
 
 use Illuminate\Http\Request;
@@ -44,7 +46,16 @@ class AnexoController extends Controller
      */
     public function index()
     {
-        abort(404, 'Não Existe.');
+        $anexos = new Anexo;
+
+        $user = Auth::user();
+        $lista_anexos_com_acesso = $user->anexos()->pluck('id')->toArray();
+        $anexos = $anexos->whereIn('id', $lista_anexos_com_acesso);
+        $anexos = $anexos->orderBy('created_at', 'asc');
+        $anexos = $anexos->paginate(session('perPage', '5'));
+        $perpages = Perpage::orderBy('valor')->get();
+
+        return view('anexos.index', compact('anexos', 'perpages'));
     }
 
     /**

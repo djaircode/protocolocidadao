@@ -56,8 +56,8 @@
                 <td>{{$permission->description}}</td>
                 <td>
                   <div class="btn-group" role="group">
-                    <a href="{{route('permissions.edit', $permission->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-pencil-square"></i></a>
-                    <a href="{{route('permissions.show', $permission->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-trash"></i></a>
+                    <a href="{{route('permissions.edit', $permission->id)}}" class="btn btn-info btn-sm" role="button"><i class="bi bi-pencil-square"></i></a>
+                    <a href="{{route('permissions.show', $permission->id)}}" class="btn btn-primary btn-sm" role="button"><i class="bi bi-eye"></i></a>
                   </div>
                 </td>
             </tr>    

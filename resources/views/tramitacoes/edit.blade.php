@@ -27,7 +27,7 @@
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('tramitacoes.index') }}">Lista de Tramitações</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Alterar Registro</li>
+      <li class="breadcrumb-item active" aria-current="page">Recebimento de Tramitação</li>
     </ol>
   </nav>
 </div>
