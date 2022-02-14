@@ -80,18 +80,6 @@
             </div>
           </li>
           @endif
-          @if (($tramitacao->recebido == 'n') and ($tramitacao->protocolo->concluido == 'n'))
-          <li class="list-group-item">  
-            <div class="container py-2 text-center" id="opcoestramitacoes">             
-              <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalReceberTramitacao">
-                <i class="bi bi-hand-thumbs-up"></i> Receber
-              </button>
-              <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalTramitarProtocolo">
-                <i class="bi bi-arrow-clockwise"></i> Tramitar 
-              </button>    
-            </div>
-          </li>
-          @endif
         </ul>
       </div>  
     </div>

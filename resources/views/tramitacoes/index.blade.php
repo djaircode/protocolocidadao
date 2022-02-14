@@ -9,11 +9,6 @@
   </nav>
   <div class="btn-group py-1" role="group" aria-label="Opções">
     <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#modalFilter"><i class="bi bi-funnel"></i> Filtrar</button>
-    <div class="btn-group" role="group">
-      <button id="btnGroupDropOptions" type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-print"></i> Relatórios
-      </button>
-    </div>
   </div>
   <div class="table-responsive">
     <table class="table table-striped">

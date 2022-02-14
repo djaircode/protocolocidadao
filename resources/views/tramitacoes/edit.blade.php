@@ -45,7 +45,7 @@
   @if(Session::has('create_tramitacao'))
   <div class="alert alert-success alert-dismissible fade show" role="alert">
     <strong>Info!</strong>  {{ session('create_tramitacao') }}
-    <p>{{ session('novaTramitacaoID') }}</p>
+    <p><a href="{{route('tramitacoes.show', session('novaTramitacaoID'))}}">Clique aqui</a> para acessar essa tramitação.</p>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>

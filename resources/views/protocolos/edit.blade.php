@@ -40,9 +40,9 @@
     </button>
   </div>
   @endif
-  @if(Session::has('create_protocolotramitacao'))
+  @if(Session::has('create_protocolo'))
   <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>Info!</strong>  {{ session('create_protocolotramitacao') }}
+    <strong>Info!</strong>  {{ session('create_protocolo') }}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>

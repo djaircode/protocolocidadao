@@ -148,7 +148,9 @@ class AnexoController extends Controller
      */
     public function show($id)
     {
-        abort(404, 'Não Existe.');
+        $anexo = Anexo::findOrFail($id);
+
+        return view('anexos.show', compact('anexo'));
     }
 
     /**
