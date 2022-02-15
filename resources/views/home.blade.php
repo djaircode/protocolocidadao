@@ -118,8 +118,8 @@
                       <td></td>
                 @endswitch
                 <td>
-                  @if (Auth::user()->id == $tramitacao_a_receber->userDestino->id)
-                  <strong class="text-warning"><i class="fas fa-hand-point-right"></i> {{$tramitacao_a_receber->userDestino->name}} </strong>
+                  @if (Auth::user()->id == $tramitacao_a_receber->userOrigem->id)
+                  <strong class="text-warning"><i class="fas fa-hand-point-right"></i> {{$tramitacao_a_receber->userOrigem->name}} </strong>
                   @else
                     <i class="fas fa-hand-point-right"></i> {{$tramitacao_a_receber->userOrigem->name}}
                   @endif
