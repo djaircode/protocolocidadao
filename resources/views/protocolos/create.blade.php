@@ -47,7 +47,7 @@
 
     <div class="form-row">
       <div class="form-group col-md-6">
-        <label for="referencia">N° do Processo/Referência <strong class="text-warning">(Opcional)</strong></label>
+        <label for="referencia">N° do Processo/Referência <strong  class="text-danger">(*)</strong></label>
         <input type="text" class="form-control{{ $errors->has('referencia') ? ' is-invalid' : '' }}" name="referencia" value="{{ old('referencia') ?? '' }}">
         @if ($errors->has('referencia'))
         <div class="invalid-feedback">

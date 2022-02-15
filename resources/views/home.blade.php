@@ -121,11 +121,11 @@
                   @if (Auth::user()->id == $tramitacao_a_receber->userDestino->id)
                   <strong class="text-warning"><i class="fas fa-hand-point-right"></i> {{$tramitacao_a_receber->userDestino->name}} </strong>
                   @else
-                    <i class="fas fa-hand-point-right"></i> {{$tramitacao_a_receber->userDestino->name}}
+                    <i class="fas fa-hand-point-right"></i> {{$tramitacao_a_receber->userOrigem->name}}
                   @endif
                 </td>
                 <td>
-                  {{$tramitacao_a_receber->setorDestino->descricao}}
+                  {{$tramitacao_a_receber->setorOrigem->descricao}}
                 </td>
                 @if($tramitacao_a_receber->recebido == 's')
                 <td>

@@ -342,7 +342,7 @@
                   @endif
                 </div>
                 <div class="col">
-                  @if ($tramitacao->recebido == 's')
+                  @if ($tramitacao->tramitado == 's')
                     <strong>Tramitado em {{$tramitacao->tramitado_em->format('d/m/Y')}}</strong>
                   @else
                     <span class="badge badge-warning">Não Tramitado</span>

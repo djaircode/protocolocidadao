@@ -175,11 +175,13 @@ class ProtocoloController extends Controller
     {
         $this->validate($request, [
           'conteudo' => 'required',
+          'referencia' => 'required',
           'protocolo_tipo_id' => 'required',       
           'arquivos.*' => 'file|mimes:pdf,doc,docx,rtf,jpg,jpeg,png,xls,xlsx,ppt,pptx|max:10240',
         ],
         [
-            'conteudo.required' => 'Preencha o conteúdo ou descrição do protocolo',
+            'conteudo.required' => 'Preencha o campo N° do Processo/Referência',
+            'referencia.required' => 'Preencha o conteúdo ou descrição do protocolo',
             'protocolo_tipo_id.required' => 'Selecione o tipo do protocolo na lista',
             'arquivos.*.mimes' => 'O arquivo anexado deve ser das seguintes extensões: pdf, doc, docx, ppt, pptx, xls, xlsx, png, jpg, jpeg ou rtf',
             'arquivos.*.max' => 'O arquivo anexado não pode ter mais de 5MB',
