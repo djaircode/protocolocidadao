@@ -291,8 +291,8 @@
       @endif
     </div>  
   </div>
-  <div class="container">
-    <div class="container bg-primary text-light">
+  <div class="container-fluid">
+    <div class="container-fluid bg-info text-dark">
       <p class="text-center"><strong>Tramitações</strong></p>
     </div>
   </div>
@@ -304,79 +304,84 @@
   </div>
   <br>
   @endif
-  @foreach($tramitacoes as $tramitacao)
-  <div class="container py-2">   
-    <div class="card">
-      <div class="card-header">
-        <div class="row">
-          <div class="col">
-            <strong class="align-middle"> Tramitado em {{$tramitacao->created_at->format('d/m/Y')}} {{$tramitacao->created_at->diffForHumans()}}</strong>   
-          </div>
-          <div class="col text-right">
-            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseTramitacao{{$tramitacao->id}}" aria-expanded="false" aria-controls="collapseExample"><i class="bi bi-plus-square"></i> Informações</button>  
-          </div>
-        </div>   
-      </div>
-      <div class="card-body">
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">
-            <div class="container">
-              <div class="row">           
-                <div class="col">
-                  <h4><i class="bi bi-arrow-right"></i> {{$tramitacao->userDestino->name}}</h4> 
-                </div>
-                <div class="col">
-                  <strong>No Setor:</strong> {{$tramitacao->setorDestino->descricao}}
-                </div>
-              </div>
-            </div>
-          </li>
-          <li class="list-group-item">          
-            <div class="container">
-              <div class="row">
-                <div class="col">
-                  @if ($tramitacao->recebido == 's')
-                    <strong>Recebido em {{$tramitacao->recebido_em->format('d/m/Y')}}</strong>
+  @if ( !$tramitacoes->isEmpty() )
+  <div class="container-fluid">
+    <div class="table-responsive">
+      <table class="table table-striped">
+          <thead>
+              <tr>
+                  <th scope="col">Data</th>
+                  <th></th>
+                  <th scope="col" class="text-right">N° Prot.</th>
+                  <th scope="col">Funcionário de Origem</th>
+                  <th scope="col">Setor de Origem</th>
+                  <th scope="col">Tramitado Para</th>
+                  <th scope="col">No Setor</th>
+                  <th scope="col">Recebido</th>
+                  <th scope="col"></th>
+              </tr>
+          </thead>
+          <tbody>
+              @foreach($tramitacoes as $tramitacao)
+              <tr>
+                  <td>
+                    {{$tramitacao->created_at->format('d/m/Y')}}
+                  </td>
+                  <td>
+                    {{$tramitacao->created_at->diffForHumans()}}
+                  </td>
+                  <td class="text-right">
+                    <strong>{{$tramitacao->protocolo->id}}</strong>
+                  </td>
+                  <td>
+                    @if (Auth::user()->id == $tramitacao->userOrigem->id)
+                    <strong class="text-warning"> {{$tramitacao->userOrigem->name}} </strong>
+                    @else
+                      {{$tramitacao->userOrigem->name}}
+                    @endif
+                  </td>
+                  <td>
+                    {{$tramitacao->setorOrigem->descricao}}
+                  </td>
+                  <td>
+                    @if (Auth::user()->id == $tramitacao->userDestino->id)
+                    <strong class="text-warning"><i class="fas fa-hand-point-right"></i> {{$tramitacao->userDestino->name}} </strong>
+                    @else
+                      <i class="fas fa-hand-point-right"></i> {{$tramitacao->userDestino->name}}
+                    @endif
+                  </td>
+                  <td>
+                    {{$tramitacao->setorDestino->descricao}}
+                  </td>
+                  @if($tramitacao->recebido == 's')
+                  <td>
+                    {{$tramitacao->recebido_em->format('d/m/Y')}}
+                  </td>
                   @else
-                    <span class="badge badge-danger">Não Recebido</span>
+                  <td>
+                    <h5><span class="badge badge-danger">Não Recebido</span></h5>
+                  </td>
                   @endif
-                </div>
-                <div class="col">
-                  @if ($tramitacao->tramitado == 's')
-                    <strong>Tramitado em {{$tramitacao->tramitado_em->format('d/m/Y')}}</strong>
-                  @else
-                    <span class="badge badge-warning">Não Tramitado</span>
-                  @endif
-                </div>
-              </div>
-            </div>
-          </li>
-          </ul>
-          <div class="collapse" id="collapseTramitacao{{$tramitacao->id}}">
-            <div class="card card-body">
-              @if ( strlen($tramitacao->mensagem) > 0 )
-              <p><strong>Mensagem:</strong> {{ $tramitacao->mensagem }}</p>
-              @endif
-              @if ( strlen($tramitacao->mensagemRecebido) > 0 )
-              <p><strong>Mensagem de recebimento:</strong> {{ $tramitacao->mensagemRecebido }}</p>
-              @endif
-              <div class="container">
-                <div class="row">
-                  <div class="col">
-                    <strong>Funcionário de Origem:</strong> {{$tramitacao->userOrigem->name}}  
-                  </div>
-                  <div class="col">
-                    <strong>Setor de Origem:</strong> {{$tramitacao->setorOrigem->descricao}}  
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>  
-      </div>  
+                  <td>
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalTramitacao" data-tramitacao-id="{{ $tramitacao->id}}"><i class="bi bi-eye"></i></button>
+                  </td>
+              </tr>    
+              @endforeach                                                 
+          </tbody>
+      </table>
     </div>
-  @endforeach
+    <div class="container p-2">
+    <p class="text-center">Esse protocolo foi tramitado {{ $tramitacoes->count() }} veze(s)</p>    
+  </div>
+  </div>
+  @else
+    <p class="p-3 text-center">Esse protocolo não foi tramitado</p>
+  @endif  
+
+
+
   <br>
+  
   @if ($protocolo->concluido === 's')
   <div class="container">
     <div class="container bg-primary text-light">
@@ -390,7 +395,7 @@
   </div>
   @endif
   <br>
-  <div class="container">
+  <div class="container py-3">
     <div class="float-right">
       <a href="{{ url('/') }}" class="btn btn-secondary" role="button"><i class="bi bi-clipboard-data"></i> Painel de Controle</a>
       <a href="{{ route('protocolos.index') }}" class="btn btn-primary" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a>
@@ -509,6 +514,26 @@
   </div>
   @endif
 
+<div class="modal fade" id="modalTramitacao" tabindex="-1" role="dialog" aria-labelledby="JanelaProfissional" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-eye"></i> Informações da Tramitação</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+ 
+
+      </div>     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i> Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>  
+
 @endsection
 @section('script-footer')
 <script src="{{ asset('js/typeahead.bundle.min.js') }}"></script>
@@ -563,7 +588,13 @@ var funcionarios = new Bloodhound({
 
     $(function () {
       $('[data-toggle="popover"]').popover()
-    })   
+    })
+
+    $('#modalTramitacao').on('show.bs.modal', function(e) {
+          var tramitacaoid = $(e.relatedTarget).data('tramitacao-id');
+
+
+      });   
 
 });
 </script>

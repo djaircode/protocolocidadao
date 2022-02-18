@@ -41,5 +41,12 @@ class ProtocoloTiposTableSeeder extends Seeder
         DB::table('protocolo_tipos')->insert([
             'descricao' => 'Documentos',
         ]);
+
+        DB::table('protocolo_tipos')->insert([
+            'descricao' => 'Despacho',
+        ]);
+        DB::table('protocolo_tipos')->insert([
+            'descricao' => 'Termo de Referência',
+        ]);
     }
 }
