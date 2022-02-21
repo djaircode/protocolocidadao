@@ -162,7 +162,7 @@
 </div>
 
 <div class="container-fluid p-3 mb-2 bg-secondary text-light text-center text-uppercase">
-      <h4><i class="bi bi-hand-index"></i> Minhas Tramitações Criadas</h4>
+      <h4><i class="bi bi-hand-index"></i> Últimas Tramitações Recebidas</h4>
 </div>
 <div class="container">
   @if ( !$minhas_tramitacoes->isEmpty() ) 
@@ -221,7 +221,7 @@
                 </td>
                 @if($minha_tramitacao->recebido == 's')
                 <td>
-                  {{$minha_tramitacao->recebido_em->format('d/m/Y')}}
+                  <h5><span class="badge badge-success"><i class="bi bi-hand-thumbs-up-fill"></i> {{$minha_tramitacao->recebido_em->format('d/m/Y')}}</span></h5>
                 </td>
                 @else
                 <td>
@@ -245,8 +245,8 @@
         </tbody>
     </table>
   </div>
-  <div class="container p-2">
-    <p class="text-center">Você está esperando {{ $minhas_tramitacoes->count() }} tramitações(ão) de protocolo(s) para ser(em) recebida(s)</p>    
+  <div class="container p-3 text-center">
+    <a href="{{ route('tramitacoes.index') }}" class="btn btn-primary btn-lg" role="button"><i class="bi bi-arrow-clockwise"></i> Ver Outras Tramitações</a>
   </div>
   @else
     <p class="p-3 text-center">Você não possui nenhuma tramitação de protocolo para ser recebida</p>

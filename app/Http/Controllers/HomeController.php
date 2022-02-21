@@ -44,9 +44,11 @@ class HomeController extends Controller
         $minhas_tramitacoes = $minhas_tramitacoes->whereHas('protocolo', function ($query) {
                                                 $query->whereIn('protocolo_situacao_id', [1,2]);
                                             });
-        $minhas_tramitacoes = $minhas_tramitacoes->where('recebido', '=', 'n');
+        $minhas_tramitacoes = $minhas_tramitacoes->where('recebido', '=', 's')->limit(5);
         $minhas_tramitacoes = $minhas_tramitacoes->orderBy('created_at', 'desc')->get();
 
+
+        // tramitações enviadas ao funccionario logado ainda não recebidas
         $tramitacoes_a_receber = new Tramitacao;
         $tramitacoes_a_receber = $tramitacoes_a_receber->where('user_id_destino', '=', $user->id);
         $tramitacoes_a_receber = $tramitacoes_a_receber->whereHas('protocolo', function ($query) {

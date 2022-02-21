@@ -308,4 +308,43 @@ class TramitacaoController extends Controller
     {
         //
     }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show_json($id)
+    {
+        $tramitacao = Tramitacao::findOrFail($id);
+
+        $result['quando'] = "Tramitado em " . $tramitacao->created_at->format('d/m/Y') . " " . $tramitacao->created_at->diffForHumans();
+
+        $result['funcionario_origem'] = $tramitacao->userOrigem->name;
+        $result['setor_origem'] = $tramitacao->setorOrigem->descricao;
+
+        $result['funcionario_destino'] = $tramitacao->userDestino->name;
+        $result['setor_destino'] = $tramitacao->setorDestino->descricao;
+
+        if ($tramitacao->recebido == 'n'){
+            $result['recebido'] = "Ainda não Recebido";
+        } else {
+            $result['recebido'] = "Recebido em ". $tramitacao->recebido_em->format('d/m/Y') . " " . $tramitacao->recebido_em->diffForHumans();
+        }
+
+        if (isset($tramitacao->mensagem) && !empty($tramitacao->mensagem)){
+            $result['mensagem'] = $tramitacao->mensagem;
+        } else {
+            $result['mensagem'] = 'Nenhuma mensagem enviada';
+        }
+
+        if (isset($tramitacao->mensagemRecebido) && !empty($tramitacao->mensagemRecebido)){
+            $result['mensagemRecebido'] = $tramitacao->mensagemRecebido;
+        } else {
+            $result['mensagemRecebido'] = 'Nenhuma mensagem de recebimento';
+        }
+
+        return response()->json($result, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+    }    
 }

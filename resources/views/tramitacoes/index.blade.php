@@ -76,11 +76,11 @@
                 </td>
                 @if($tramitacao->recebido == 's')
                 <td>
-                  {{$tramitacao->recebido_em->format('d/m/Y')}}
+                  <h5><span class="badge badge-success"><i class="bi bi-hand-thumbs-up-fill"></i> {{$tramitacao->recebido_em->format('d/m/Y')}}</span></h5>
                 </td>
                 @else
                 <td>
-                  <h5><span class="badge badge-danger">Não Recebido</span></h5>
+                  <h5><span class="badge badge-danger"><i class="bi bi-hand-thumbs-down-fill"></i>Não Recebido</span></h5>
                 </td>
                 @endif
                 <td>

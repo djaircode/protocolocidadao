@@ -355,15 +355,15 @@
                   </td>
                   @if($tramitacao->recebido == 's')
                   <td>
-                    {{$tramitacao->recebido_em->format('d/m/Y')}}
+                    <h5><span class="badge badge-success"><i class="bi bi-hand-thumbs-up-fill"></i> {{$tramitacao->recebido_em->format('d/m/Y')}}</span></h5>
                   </td>
                   @else
                   <td>
-                    <h5><span class="badge badge-danger">Não Recebido</span></h5>
+                    <h5><span class="badge badge-danger"><i class="bi bi-hand-thumbs-down-fill"></i>Não Recebido</span></h5>
                   </td>
                   @endif
                   <td>
-                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalTramitacao" data-tramitacao-id="{{ $tramitacao->id}}"><i class="bi bi-eye"></i></button>
+                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalTramitacao" data-tramitacao-id="{{ $tramitacao->id}}"><i class="bi bi-eye"></i></button>
                   </td>
               </tr>    
               @endforeach                                                 
@@ -514,6 +514,7 @@
   </div>
   @endif
 
+@if ( !$tramitacoes->isEmpty() )
 <div class="modal fade" id="modalTramitacao" tabindex="-1" role="dialog" aria-labelledby="JanelaProfissional" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
@@ -524,8 +525,44 @@
         </button>
       </div>
       <div class="modal-body">
- 
-
+         <div class="container">
+          <span class="text-center" id="quando_text"></span>  
+        </div>
+        <div class="container bg-info text-white">
+          <div class="row">           
+            <div class="col">
+              <label for="tramitado_para_text"><i class="bi bi-arrow-right"></i> Tramitado para o funcionário:</label>
+              <h5 id="tramitado_para_text"></h5> 
+            </div>
+            <div class="col">
+              <label for="no_setor_text"><i class="bi bi-arrow-right"></i> Do setor:</label>
+              <h5 id="no_setor_text"></h5> 
+            </div>
+          </div>
+        </div>  
+        <div class="container">
+          <div class="row">           
+            <div class="col">
+              <label for="funcionario_origem_text">Funcionário de Origem:</label>
+              <h5 id="funcionario_origem_text"></h5> 
+            </div>
+            <div class="col">
+              <label for="setor_origem_text">Setor de Origem:</label>  
+              <h5 id="setor_origem_text"></h5> 
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <h4 class="p-3 mb-2 bg-primary text-white text-center" id="recebida_text"></h4>
+        </div>
+        <div class="container">
+          <label for="menagem_text">Mensagem Enviada:</label>      
+          <p class=" p-2 mb-2 bg-light text-dark" id="menagem_text"></p>
+        </div>
+        <div class="container">
+          <label for="menagem_recebimento_text">Mensagem de Recebimento:</label>       
+          <p class=" p-2 mb-2 bg-light text-dark" id="menagem_recebimento_text"></p>
+        </div>
       </div>     
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i> Fechar</button>
@@ -533,6 +570,7 @@
     </div>
   </div>
 </div>  
+@endif
 
 @endsection
 @section('script-footer')
@@ -593,7 +631,21 @@ var funcionarios = new Bloodhound({
     $('#modalTramitacao').on('show.bs.modal', function(e) {
           var tramitacaoid = $(e.relatedTarget).data('tramitacao-id');
 
-
+          $.ajax({
+            dataType: "json",
+            url: "{{url('/')}}" + "/tramitacoes/json/" + tramitacaoid,
+            type: "GET",
+            success: function(json) {
+                    $("#quando_text").text(json['quando']);
+                    $("#tramitado_para_text").text(json['funcionario_destino']);
+                    $("#no_setor_text").text(json['setor_destino']);
+                    $("#funcionario_origem_text").text(json['funcionario_origem']);
+                    $("#setor_origem_text").text(json['setor_origem']);
+                    $("#recebida_text").text(json['recebido']);
+                    $("#menagem_text").text(json['mensagem']);
+                    $("#menagem_recebimento_text").text(json['mensagemRecebido']);
+            }
+        });
       });   
 
 });

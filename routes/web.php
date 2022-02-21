@@ -84,6 +84,7 @@ Route::resource('/anexos', 'AnexoController')->only(['store', 'destroy', 'index'
 
 Route::get('/tramitacoes/export/csv', 'TramitacaoController@exportcsv')->name('tramitacoes.export.csv');
 Route::get('/tramitacoes/export/pdf', 'TramitacaoController@exportpdf')->name('tramitacoes.export.pdf');
+Route::get('/tramitacoes/json/{id}', 'TramitacaoController@show_json')->name('tramitacoes.show.json');
 Route::resource('/tramitacoes', 'TramitacaoController');
 
 /* TRAMITAÇÃO DOS PROTOCOLOS */
