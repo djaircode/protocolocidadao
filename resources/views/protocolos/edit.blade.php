@@ -89,6 +89,17 @@
           <label for="hora">Hora</label>
           <input type="text" class="form-control" name="hora" value="{{ $protocolo->created_at->format('H:i') }}" readonly>
         </div>
+        <div class="form-group col-md-5 text-right">
+          <div class="btn-group" role="group">
+            <button id="btnGroupDropOptions" type="button" class="btn btn-secondary dropdown-toggle btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="bi bi-printer"></i>Relatórios
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupDropOptions">
+              <a class="dropdown-item" href="{{ route('protocolos.export.pdf.completo', $protocolo->id) }}" id="btnExportarPDF"><i class="bi bi-file-pdf-fill"></i> Exportar PDF Completo</a>
+              <a class="dropdown-item" href="{{ route('protocolos.export.pdf.simples', $protocolo->id) }}" id="btnExportarPDF"><i class="bi bi-file-pdf-fill"></i> Exportar PDF Simples</a>
+            </div>
+          </div>
+        </div>  
       </div>
       <div class="form-row">
         <div class="form-group col-md-6">
@@ -153,6 +164,17 @@
         <div class="form-group col-md-2">
           <label for="hora">Hora</label>
           <input type="text" class="form-control" name="hora" value="{{ $protocolo->created_at->format('H:i') }}" readonly>
+        </div>
+        <div class="form-group col-md-5 text-right">
+          <div class="btn-group" role="group">
+            <button id="btnGroupDropOptions" type="button" class="btn btn-secondary dropdown-toggle btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="bi bi-printer"></i>Relatórios
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupDropOptions">
+              <a class="dropdown-item" href="{{ route('protocolos.export.pdf.completo', $protocolo->id) }}" id="btnExportarPDF"><i class="bi bi-file-pdf-fill"></i> Exportar PDF Completo</a>
+              <a class="dropdown-item" href="{{ route('protocolos.export.pdf.simples', $protocolo->id) }}" id="btnExportarPDF"><i class="bi bi-file-pdf-fill"></i> Exportar PDF Simples</a>
+            </div>
+          </div>
         </div>
       </div>
       <div class="form-row">
@@ -311,6 +333,7 @@
           <thead>
               <tr>
                   <th scope="col">Data</th>
+                  <th scope="col">Hora</th>
                   <th></th>
                   <th scope="col" class="text-right">N° Prot.</th>
                   <th scope="col">Funcionário de Origem</th>
@@ -326,6 +349,9 @@
               <tr>
                   <td>
                     {{$tramitacao->created_at->format('d/m/Y')}}
+                  </td>
+                  <td>
+                    {{ $tramitacao->created_at->format('H:i') }}
                   </td>
                   <td>
                     {{$tramitacao->created_at->diffForHumans()}}
@@ -377,10 +403,31 @@
   @else
     <p class="p-3 text-center">Esse protocolo não foi tramitado</p>
   @endif  
-
-
-
   <br>
+
+  <div class="container">
+    <div class="container bg-primary text-light">
+      <p class="text-center"><strong>Funcionários com Acesso a esse Protocolo</strong></p>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped">
+          <thead>
+              <tr>
+                  <th scope="col">Funcionário</th>
+                  <th scope="col">Setor</th>
+              </tr>
+          </thead>
+          <tbody>
+            @foreach($protocolo->users->sortBy('name') as $user)
+            <tr>
+                <td>{{ $user->name  }}</td>
+                <td>{{ $user->setor->descricao }}</td>
+            </tr>    
+            @endforeach
+          </tbody>
+      </table>
+    </div>
+  </div>  
   
   @if ($protocolo->concluido === 's')
   <div class="container">
@@ -487,32 +534,33 @@
     </div>
   </div>
   @endif
-  @if ($protocolo->concluido === 's' )
-  <div class="modal fade" id="modalReabrirprotocolo" tabindex="-1" role="dialog" aria-labelledby="janelaReabrirProtocolo" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalCenterTitle"><i class="bi bi-folder2-open"></i> Reabrir Protocolo</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form method="post" action="{{route('protocolos.reabrir', array($protocolo->id))}}">
-            @csrf
-            <div class="alert alert-primary" role="alert">
-              <strong>Atenção!</strong> Ao reabrir um protocolo concluído será apagado a mensagem e data de conclusão.       
-            </div>
-            <button type="submit" class="btn btn-success"><i class="bi bi-question-square"></i> Confirmar</button>
-          </form>
-        </div>     
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i> Cancelar</button>
-        </div>
+  
+@if ($protocolo->concluido === 's' )
+<div class="modal fade" id="modalReabrirprotocolo" tabindex="-1" role="dialog" aria-labelledby="janelaReabrirProtocolo" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle"><i class="bi bi-folder2-open"></i> Reabrir Protocolo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{{route('protocolos.reabrir', array($protocolo->id))}}">
+          @csrf
+          <div class="alert alert-primary" role="alert">
+            <strong>Atenção!</strong> Ao reabrir um protocolo concluído será apagado a mensagem e data de conclusão.       
+          </div>
+          <button type="submit" class="btn btn-success"><i class="bi bi-question-square"></i> Confirmar</button>
+        </form>
+      </div>     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i> Cancelar</button>
       </div>
     </div>
   </div>
-  @endif
+</div>
+@endif
 
 @if ( !$tramitacoes->isEmpty() )
 <div class="modal fade" id="modalTramitacao" tabindex="-1" role="dialog" aria-labelledby="JanelaProfissional" aria-hidden="true">
@@ -598,6 +646,7 @@ var funcionarios = new Bloodhound({
         name: "funcionarios",
                 displayKey: "text",
                 source: funcionarios.ttAdapter(),
+                limit: 7,
                 templates: {
                   empty: [
                     '<div class="empty-message">',
@@ -605,7 +654,7 @@ var funcionarios = new Bloodhound({
                     '</div>'
                   ].join('\n'),
                   suggestion: function(data) {
-                      return '<div class="text-dark"><div>' + data.text + ' - <strong>Setor:</strong> ' + data.setor + '</div></div>';
+                      return '<div class="text-dark"><div>' + data.text + ' - ' + data.setor + '</div></div>';
                     }
                 }
         }).on("typeahead:selected", function(obj, datum, name) {

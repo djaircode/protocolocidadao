@@ -119,90 +119,214 @@
       </div> 
     </div>        
    </div>
-  <div class="container">
-    <div class="container bg-primary text-light">
-      <p class="text-center"><strong>Tramitações</strong></p>
-    </div>
-  </div>
-  <br>
-  @foreach($tramitacoes as $tramitacao)
-  <div class="container py-2">   
-    <div class="card">
-      <div class="card-header">
-        <div class="row">
-          <div class="col">
-            <strong class="align-middle"> Tramitado em {{$tramitacao->created_at->format('d/m/Y')}} {{$tramitacao->created_at->diffForHumans()}}</strong>   
-          </div>
-          <div class="col text-right">
-            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseTramitacao{{$tramitacao->id}}" aria-expanded="false" aria-controls="collapseExample"><i class="bi bi-plus-square"></i> Informações</button>  
-          </div>
-        </div>   
-      </div>
-      <div class="card-body">
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">
-            <div class="container">
-              <div class="row">           
-                <div class="col">
-                  <h4><i class="bi bi-arrow-right"></i> {{$tramitacao->userDestino->name}}</h4> 
-                </div>
-                <div class="col">
-                  <strong>No Setor:</strong> {{$tramitacao->setorDestino->descricao}}
-                </div>
-              </div>
-            </div>
-          </li>
-          <li class="list-group-item">          
-            <div class="container">
-              <div class="row">
-                <div class="col">
-                  @if ($tramitacao->recebido == 's')
-                    <strong>Recebido em {{$tramitacao->recebido_em->format('d/m/Y')}}</strong>
-                  @else
-                    <span class="badge badge-danger">Não Recebido</span>
-                  @endif
-                </div>
-                <div class="col">
-                  @if ($tramitacao->tramitado == 's')
-                    <strong>Tramitado em {{$tramitacao->tramitado_em->format('d/m/Y')}}</strong>
-                  @else
-                    <span class="badge badge-warning">Não Tramitado</span>
-                  @endif
-                </div>
-              </div>
-            </div>
-          </li>
-          </ul>
-          <div class="collapse" id="collapseTramitacao{{$tramitacao->id}}">
-            <div class="card card-body">
-              @if ( strlen($tramitacao->mensagem) > 0 )
-              <p><strong>Mensagem:</strong> {{ $tramitacao->mensagem }}</p>
-              @endif
-              @if ( strlen($tramitacao->mensagemRecebido) > 0 )
-              <p><strong>Mensagem de recebimento:</strong> {{ $tramitacao->mensagemRecebido }}</p>
-              @endif
-              <div class="container">
-                <div class="row">
-                  <div class="col">
-                    <strong>Funcionário de Origem:</strong> {{$tramitacao->userOrigem->name}}  
-                  </div>
-                  <div class="col">
-                    <strong>Setor de Origem:</strong> {{$tramitacao->setorOrigem->descricao}}  
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>            
-        </div>  
-      </div>  
-    </div>
-    @endforeach
-  <br>
-  <div class="container">
-    <div class="float-right">
-      <a href="{{ url('/') }}" class="btn btn-secondary" role="button"><i class="bi bi-clipboard-data"></i> Painel de Controle</a>
-      <a href="{{ route('protocolos.index') }}" class="btn btn-primary" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a> 
-    </div>
+</div>
+
+
+<div class="container-fluid">
+  <div class="container-fluid bg-info text-dark">
+    <p class="text-center"><strong>Tramitações</strong></p>
   </div>
 </div>
+
+ @if ( !$tramitacoes->isEmpty() )
+<div class="container-fluid">
+  <div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Data</th>
+                <th scope="col">Hora</th>
+                <th></th>
+                <th scope="col" class="text-right">N° Prot.</th>
+                <th scope="col">Funcionário de Origem</th>
+                <th scope="col">Setor de Origem</th>
+                <th scope="col">Tramitado Para</th>
+                <th scope="col">No Setor</th>
+                <th scope="col">Recebido</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tramitacoes as $tramitacao)
+            <tr>
+                <td>
+                  {{$tramitacao->created_at->format('d/m/Y')}}
+                </td>
+                <td>
+                  {{ $tramitacao->created_at->format('H:i') }}
+                </td>
+                <td>
+                  {{$tramitacao->created_at->diffForHumans()}}
+                </td>
+                <td class="text-right">
+                  <strong>{{$tramitacao->protocolo->id}}</strong>
+                </td>
+                <td>
+                  @if (Auth::user()->id == $tramitacao->userOrigem->id)
+                  <strong class="text-warning"> {{$tramitacao->userOrigem->name}} </strong>
+                  @else
+                    {{$tramitacao->userOrigem->name}}
+                  @endif
+                </td>
+                <td>
+                  {{$tramitacao->setorOrigem->descricao}}
+                </td>
+                <td>
+                  @if (Auth::user()->id == $tramitacao->userDestino->id)
+                  <strong class="text-warning"><i class="fas fa-hand-point-right"></i> {{$tramitacao->userDestino->name}} </strong>
+                  @else
+                    <i class="fas fa-hand-point-right"></i> {{$tramitacao->userDestino->name}}
+                  @endif
+                </td>
+                <td>
+                  {{$tramitacao->setorDestino->descricao}}
+                </td>
+                @if($tramitacao->recebido == 's')
+                <td>
+                  <h5><span class="badge badge-success"><i class="bi bi-hand-thumbs-up-fill"></i> {{$tramitacao->recebido_em->format('d/m/Y')}}</span></h5>
+                </td>
+                @else
+                <td>
+                  <h5><span class="badge badge-danger"><i class="bi bi-hand-thumbs-down-fill"></i>Não Recebido</span></h5>
+                </td>
+                @endif
+                <td>
+                  <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalTramitacao" data-tramitacao-id="{{ $tramitacao->id}}"><i class="bi bi-eye"></i></button>
+                </td>
+            </tr>    
+            @endforeach                                                 
+        </tbody>
+    </table>
+  </div>
+  <div class="container p-2">
+  <p class="text-center">Esse protocolo foi tramitado {{ $tramitacoes->count() }} veze(s)</p>    
+</div>
+</div>
+@else
+  <p class="p-3 text-center">Esse protocolo não foi tramitado</p>
+@endif  
+<br>
+
+<div class="container">
+  <div class="container bg-primary text-light">
+    <p class="text-center"><strong>Funcionários com Acesso a esse Protocolo</strong></p>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Funcionário</th>
+                <th scope="col">Setor</th>
+            </tr>
+        </thead>
+        <tbody>
+          @foreach($protocolo->users->sortBy('name') as $user)
+          <tr>
+              <td>{{ $user->name  }}</td>
+              <td>{{ $user->setor->descricao }}</td>
+          </tr>    
+          @endforeach
+        </tbody>
+    </table>
+  </div>
+</div>
+
+
+<br>
+<div class="container">
+  <div class="float-right">
+    <a href="{{ url('/') }}" class="btn btn-secondary" role="button"><i class="bi bi-clipboard-data"></i> Painel de Controle</a>
+    <a href="{{ route('protocolos.index') }}" class="btn btn-primary" role="button"><i class="bi bi-arrow-left-square"></i> Voltar</a> 
+  </div>
+</div>
+
+@if ( !$tramitacoes->isEmpty() )
+<div class="modal fade" id="modalTramitacao" tabindex="-1" role="dialog" aria-labelledby="JanelaProfissional" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-eye"></i> Informações da Tramitação</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         <div class="container">
+          <span class="text-center" id="quando_text"></span>  
+        </div>
+        <div class="container bg-info text-white">
+          <div class="row">           
+            <div class="col">
+              <label for="tramitado_para_text"><i class="bi bi-arrow-right"></i> Tramitado para o funcionário:</label>
+              <h5 id="tramitado_para_text"></h5> 
+            </div>
+            <div class="col">
+              <label for="no_setor_text"><i class="bi bi-arrow-right"></i> Do setor:</label>
+              <h5 id="no_setor_text"></h5> 
+            </div>
+          </div>
+        </div>  
+        <div class="container">
+          <div class="row">           
+            <div class="col">
+              <label for="funcionario_origem_text">Funcionário de Origem:</label>
+              <h5 id="funcionario_origem_text"></h5> 
+            </div>
+            <div class="col">
+              <label for="setor_origem_text">Setor de Origem:</label>  
+              <h5 id="setor_origem_text"></h5> 
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <h4 class="p-3 mb-2 bg-primary text-white text-center" id="recebida_text"></h4>
+        </div>
+        <div class="container">
+          <label for="menagem_text">Mensagem Enviada:</label>      
+          <p class=" p-2 mb-2 bg-light text-dark" id="menagem_text"></p>
+        </div>
+        <div class="container">
+          <label for="menagem_recebimento_text">Mensagem de Recebimento:</label>       
+          <p class=" p-2 mb-2 bg-light text-dark" id="menagem_recebimento_text"></p>
+        </div>
+      </div>     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i> Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>  
+@endif
+
+@endsection
+
+@section('script-footer')
+<script>
+$(document).ready(function(){
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+
+    $('#modalTramitacao').on('show.bs.modal', function(e) {
+          var tramitacaoid = $(e.relatedTarget).data('tramitacao-id');
+
+          $.ajax({
+            dataType: "json",
+            url: "{{url('/')}}" + "/tramitacoes/json/" + tramitacaoid,
+            type: "GET",
+            success: function(json) {
+                    $("#quando_text").text(json['quando']);
+                    $("#tramitado_para_text").text(json['funcionario_destino']);
+                    $("#no_setor_text").text(json['setor_destino']);
+                    $("#funcionario_origem_text").text(json['funcionario_origem']);
+                    $("#setor_origem_text").text(json['setor_origem']);
+                    $("#recebida_text").text(json['recebido']);
+                    $("#menagem_text").text(json['mensagem']);
+                    $("#menagem_recebimento_text").text(json['mensagemRecebido']);
+            }
+        });
+      });   
+
+});
+</script>
 @endsection

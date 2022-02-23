@@ -43,7 +43,7 @@ class ProtocoloController extends Controller
      *
      * @return 
      */
-    public function __construct(\App\Reports\TemplateReport $pdf)
+    public function __construct(\App\Reports\ProtocoloSimplesReport $pdf)
     {
         $this->middleware(['middleware' => 'auth']);
         $this->middleware(['middleware' => 'hasaccess']);
@@ -359,7 +359,7 @@ class ProtocoloController extends Controller
      */
     public function destroy($id)
     {
-        //
+        abort(403, 'Não Existe.');
     }
 
     public function concluir(Request $request, $id)
@@ -420,5 +420,195 @@ class ProtocoloController extends Controller
         $protocolo->save();
 
         return redirect(route('protocolos.edit', $id));
-    }      
+    }
+
+    public function exportpdf_simples($id)
+    {
+        $protocolo = Protocolo::findOrFail($id);
+
+        // configura o relatório
+        $this->pdf->AliasNbPages();   
+        $this->pdf->SetMargins(12, 10, 12);
+        $this->pdf->SetFont('Arial', '', 10);
+        $this->pdf->AddPage();
+
+        $this->pdf->Cell(36, 6, utf8_decode('Nº'), 1, 0,'R');
+        $this->pdf->Cell(50, 6, utf8_decode('Data'), 1, 0,'L');
+        $this->pdf->Cell(50, 6, utf8_decode('Hora'), 1, 0,'L');
+        $this->pdf->Cell(50, 6, utf8_decode(''), 0, 0,'L');
+        $this->pdf->Ln();
+        $this->pdf->Cell(36, 6, utf8_decode($protocolo->id), 1, 0,'R');
+        $this->pdf->Cell(50, 6, utf8_decode($protocolo->created_at->format('d/m/Y')), 1, 0,'L');
+        $this->pdf->Cell(50, 6, utf8_decode($protocolo->created_at->format('H:i')), 1, 0,'L');
+        $this->pdf->Cell(50, 6, utf8_decode(''), 0, 0,'L');
+        $this->pdf->Ln();
+
+        $this->pdf->Ln();
+
+        $this->pdf->Cell(93, 6, utf8_decode('Funcionário Responsável'), 1, 0,'L');
+        $this->pdf->Cell(93, 6, utf8_decode('Setor'), 1, 0,'L');
+        $this->pdf->Ln();
+        $this->pdf->Cell(93, 6, utf8_decode($protocolo->user->name), 1, 0,'L');
+        $this->pdf->Cell(93, 6, utf8_decode($protocolo->user->setor->descricao), 1, 0,'L');
+        $this->pdf->Ln();
+
+        $this->pdf->Ln();
+
+        $this->pdf->Cell(93, 6, utf8_decode('N° do Processo/Referência'), 1, 0,'L');
+        $this->pdf->Cell(93, 6, utf8_decode('Tipo do Protocolo'), 1, 0,'L');
+        $this->pdf->Ln();
+        $this->pdf->Cell(93, 6, utf8_decode($protocolo->referencia), 1, 0,'L');
+        $this->pdf->Cell(93, 6, utf8_decode($protocolo->protocoloTipo->descricao), 1, 0,'L');
+        $this->pdf->Ln();
+
+        $this->pdf->Ln();
+
+        $this->pdf->Cell(186, 6, utf8_decode('Conteúdo/Descrição'), 1, 0,'L');
+        $this->pdf->Ln();
+        $this->pdf->MultiCell(186, 6, utf8_decode($protocolo->conteudo), 0, 'L', false);
+
+        $this->pdf->Ln();
+
+        $this->pdf->Cell(186, 6, utf8_decode('Conteúdo/Descrição'), 1, 0,'L');
+        $this->pdf->Ln();
+        $this->pdf->Cell(186, 6, utf8_decode($protocolo->protocoloSituacao->descricao), 1, 0,'L');
+
+        $this->pdf->Output('D', 'Protocolo_' . $protocolo->id . '-' . date("Y-m-d H:i:s") . '.pdf', true);
+        exit;
+    }
+
+    public function exportpdf_completo($id)
+    {
+        $protocolo = Protocolo::findOrFail($id);
+
+        // configura o relatório
+        $this->pdf->AliasNbPages();   
+        $this->pdf->SetMargins(12, 10, 12);
+        $this->pdf->SetFont('Arial', '', 10);
+        $this->pdf->AddPage();
+
+        $this->pdf->Cell(86, 6, utf8_decode('Nº'), 1, 0,'R');
+        $this->pdf->Cell(50, 6, utf8_decode('Data'), 1, 0,'L');
+        $this->pdf->Cell(50, 6, utf8_decode('Hora'), 1, 0,'L');
+        $this->pdf->Ln();
+        $this->pdf->Cell(86, 6, utf8_decode($protocolo->id), 1, 0,'R');
+        $this->pdf->Cell(50, 6, utf8_decode($protocolo->created_at->format('d/m/Y')), 1, 0,'L');
+        $this->pdf->Cell(50, 6, utf8_decode($protocolo->created_at->format('H:i')), 1, 0,'L');
+        $this->pdf->Ln();
+
+        $this->pdf->Cell(93, 6, utf8_decode('Funcionário Responsável'), 1, 0,'L');
+        $this->pdf->Cell(93, 6, utf8_decode('Setor'), 1, 0,'L');
+        $this->pdf->Ln();
+        $this->pdf->Cell(93, 6, utf8_decode($protocolo->user->name), 1, 0,'L');
+        $this->pdf->Cell(93, 6, utf8_decode($protocolo->user->setor->descricao), 1, 0,'L');
+        $this->pdf->Ln();
+
+        $this->pdf->Cell(93, 6, utf8_decode('N° do Processo/Referência'), 1, 0,'L');
+        $this->pdf->Cell(93, 6, utf8_decode('Tipo do Protocolo'), 1, 0,'L');
+        $this->pdf->Ln();
+        $this->pdf->Cell(93, 6, utf8_decode($protocolo->referencia), 1, 0,'L');
+        $this->pdf->Cell(93, 6, utf8_decode($protocolo->protocoloTipo->descricao), 1, 0,'L');
+        $this->pdf->Ln();
+
+        $this->pdf->Cell(186, 6, utf8_decode('Conteúdo/Descrição'), 1, 0,'L');
+        $this->pdf->Ln();
+        $this->pdf->MultiCell(186, 6, utf8_decode($protocolo->conteudo), 0, 'L', false);
+
+        $this->pdf->Cell(186, 6, utf8_decode('Conteúdo/Descrição'), 1, 0,'L');
+        $this->pdf->Ln();
+        $this->pdf->Cell(186, 6, utf8_decode($protocolo->protocoloSituacao->descricao), 1, 0,'L');
+
+        $this->pdf->Ln();
+
+        $this->pdf->Ln();
+        $this->pdf->Cell(186, 6, utf8_decode('Anexos'), 1, 0,'C');
+        $this->pdf->Ln();
+
+        // anexos
+        if(count($protocolo->anexos)){
+            # titulo
+            $this->pdf->Cell(22, 6, utf8_decode('Data'), 1, 0,'L');
+            $this->pdf->Cell(12, 6, utf8_decode('Hora'), 1, 0,'L');
+            $this->pdf->Cell(87, 6, utf8_decode('Arquivo'), 1, 0,'L');
+            $this->pdf->Cell(65, 6, utf8_decode('Responsável'), 1, 0,'L');
+            $this->pdf->Ln();
+
+            foreach($protocolo->anexos as $anexo){
+                $this->pdf->Cell(22, 6, utf8_decode($anexo->created_at->format('d/m/Y')), 0, 0,'L');
+                $this->pdf->Cell(12, 6, utf8_decode($anexo->created_at->format('H:i')), 0, 0,'L');
+                $url = route('anexos.download', $anexo->codigoAnexoPublico);
+                $this->pdf->SetFont('Arial', 'U', 10);
+                $this->pdf->SetTextColor(0, 0, 255);
+                $this->pdf->Cell(87, 6, utf8_decode($anexo->arquivoNome), 0, 0,'L', false, $url);
+                $this->pdf->SetFont('Arial', '', 10);
+                $this->pdf->SetTextColor(0);
+                $this->pdf->Cell(65, 6, utf8_decode($anexo->user->name), 0, 0,'L');            
+                $this->pdf->Ln();
+            }
+        } else {
+            $this->pdf->Ln();
+            $this->pdf->Cell(186, 6, utf8_decode('Nenhum Arquivo Anexado'), 0, 0,'C');
+            $this->pdf->Ln();
+        }
+
+        $this->pdf->Ln();
+        $this->pdf->Cell(186, 6, utf8_decode('Tramitações'), 1, 0,'C');
+        $this->pdf->Ln();
+        $this->pdf->Ln();   
+
+        // tramitações
+        if(count($protocolo->tramitacaos)){
+            foreach ($protocolo->tramitacaos->sortByDesc('id') as $tramitacao) {
+                $this->pdf->Cell(22, 6, utf8_decode('Data'), 1, 0,'L');
+                $this->pdf->Cell(12, 6, utf8_decode('Hora'), 1, 0,'L');
+                $this->pdf->Cell(87, 6, utf8_decode('Funcionário de Origem'), 1, 0,'L');
+                $this->pdf->Cell(65, 6, utf8_decode('Setor de Origem'), 1, 0,'L');
+                $this->pdf->Ln();     
+                $this->pdf->Cell(22, 6, utf8_decode($tramitacao->created_at->format('d/m/Y')), 1, 0,'L');
+                $this->pdf->Cell(12, 6, utf8_decode($tramitacao->created_at->format('H:i')), 1, 0,'L');
+                $this->pdf->Cell(87, 6, utf8_decode($tramitacao->userOrigem->name), 1, 0,'L');
+                $this->pdf->Cell(65, 6, utf8_decode($tramitacao->setorOrigem->descricao), 1, 0,'L');
+                $this->pdf->Ln();
+
+                $this->pdf->Cell(93, 6, utf8_decode('Tramitado Para'), 1, 0,'L');
+                $this->pdf->Cell(93, 6, utf8_decode('No Setor'), 1, 0,'L');
+                $this->pdf->Ln();
+                $this->pdf->Cell(93, 6, utf8_decode($tramitacao->userDestino->name), 1, 0,'L');
+                $this->pdf->Cell(93, 6, utf8_decode($tramitacao->setorDestino->descricao), 1, 0,'L');
+                $this->pdf->Ln();
+
+                $this->pdf->Cell(186, 6, utf8_decode('Situação'), 1, 0,'L');
+                $this->pdf->Ln();
+                if ($tramitacao->recebido == 's'){
+                    $situacao = 'Recebido em ' . $tramitacao->recebido_em->format('d/m/Y');
+                } else {
+                    $situacao = 'Ainda não Recebido';
+                }
+                $this->pdf->Cell(186, 6, utf8_decode( $situacao ), 1, 0,'L');
+                $this->pdf->Ln();
+
+                if ($tramitacao->mensagem != ''){
+                    $this->pdf->MultiCell(186, 6, utf8_decode('Mensagem Enviada: ' . $tramitacao->mensagem), 1, 'L', false);
+                    $this->pdf->Ln();
+                }
+
+                if ($tramitacao->mensagemRecebido != ''){
+                    $this->pdf->MultiCell(186, 6, utf8_decode('Mensagem de Recebimento: ' . $tramitacao->mensagemRecebido), 1, 'L', false);
+                    $this->pdf->Ln();
+                }
+
+                $this->pdf->Ln();
+            }    
+        } else {
+            $this->pdf->Ln();
+            $this->pdf->Cell(186, 6, utf8_decode('Esse Protocolo não foi Tramitado'), 0, 0,'C');
+            $this->pdf->Ln();    
+        }
+
+
+
+        $this->pdf->Output('D', 'Protocolo_Completo_' . $protocolo->id . '-' . date("Y-m-d H:i:s") . '.pdf', true);
+        exit;
+
+    }
 }

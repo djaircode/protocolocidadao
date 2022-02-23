@@ -166,7 +166,7 @@ class TramitacaoController extends Controller
      */
     public function create()
     {
-        //
+        abort(403, 'Não Existe.');
     }
 
     /**
@@ -277,6 +277,7 @@ class TramitacaoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    ## equivale a receber o protocolo
     public function update(Request $request, $id)
     {
         $tramitacao = Tramitacao::findOrFail($id);
@@ -306,7 +307,7 @@ class TramitacaoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        abort(403, 'Não Existe.');
     }
 
     /**
@@ -346,5 +347,27 @@ class TramitacaoController extends Controller
         }
 
         return response()->json($result, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function reabrir($id)
+    {
+        $tramitacao = Tramitacao::findOrFail($id);
+
+        // recebe os dados do usuario logado
+        $user = Auth::user();
+
+        // validar acesso
+        //verifica se o usuário logado é dono do arquivo
+        if ($tramitacao->userDestino->id != $user->id) {
+            abort(403, 'Acesso negado. Essa tramitacao não é sua.');
+        }
+
+        $tramitacao->recebido_em = null;
+        $tramitacao->mensagemRecebido = '';
+        $tramitacao->recebido = 'n';
+
+        $tramitacao->save();
+
+        return redirect(route('tramitacoes.edit', $id));
     }    
 }

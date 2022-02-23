@@ -86,6 +86,6 @@ class ProtocoloTramitacaoController extends Controller
 
     public function destroy($id)
     {
-        //
+        abort(403, 'Não Existe.');
     }
 }

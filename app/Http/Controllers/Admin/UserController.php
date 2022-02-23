@@ -325,7 +325,7 @@ class UserController extends Controller
         );
         
         //where
-        $profissionais = $profissionais->where("users.name","LIKE","%{$request->input('query')}%");
+        $profissionais = $profissionais->where("users.name","LIKE","%{$request->input('query')}%")->orWhere("setors.descricao","LIKE","%{$request->input('query')}%");
         $profissionais = $profissionais->where("users.active","=","Y");
 
         //get

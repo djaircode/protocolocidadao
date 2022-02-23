@@ -164,6 +164,7 @@ var funcionarios = new Bloodhound({
         name: "funcionarios",
                 displayKey: "text",
                 source: funcionarios.ttAdapter(),
+                limit: 7,
                 templates: {
                   empty: [
                     '<div class="empty-message">',
@@ -171,7 +172,7 @@ var funcionarios = new Bloodhound({
                     '</div>'
                   ].join('\n'),
                   suggestion: function(data) {
-                      return '<div class="text-dark"><div>' + data.text + ' - <strong>Setor:</strong> ' + data.setor + '</div></div>';
+                      return '<div class="text-dark"><div>' + data.text + ' - ' + data.setor + '</div></div>';
                     }
                 }
         }).on("typeahead:selected", function(obj, datum, name) {

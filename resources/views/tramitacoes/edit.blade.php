@@ -298,6 +298,130 @@
     </div>  
   </div>
 </div>
+
+<div class="container-fluid">
+  <div class="container-fluid bg-info text-dark">
+    <p class="text-center"><strong>Tramitações</strong></p>
+  </div>
+</div>
+
+@if ( !$protocolo->tramitacaos->isEmpty() )
+<div class="container-fluid">
+  <div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Data</th>
+                <th scope="col">Hora</th>
+                <th></th>
+                <th scope="col" class="text-right">N° Prot.</th>
+                <th scope="col">Funcionário de Origem</th>
+                <th scope="col">Setor de Origem</th>
+                <th scope="col">Tramitado Para</th>
+                <th scope="col">No Setor</th>
+                <th scope="col">Recebido</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($protocolo->tramitacaos->sortByDesc('id') as $tramitacao_temp)
+            <tr>
+                <td>
+                  {{$tramitacao_temp->created_at->format('d/m/Y')}}
+                </td>
+                <td>
+                  {{ $tramitacao_temp->created_at->format('H:i') }}
+                </td>
+                <td>
+                  {{$tramitacao_temp->created_at->diffForHumans()}}
+                </td>
+                <td class="text-right">
+                  <strong>{{$tramitacao_temp->protocolo->id}}</strong>
+                </td>
+                <td>
+                  @if (Auth::user()->id == $tramitacao_temp->userOrigem->id)
+                  <strong class="text-warning"> {{$tramitacao_temp->userOrigem->name}} </strong>
+                  @else
+                    {{$tramitacao_temp->userOrigem->name}}
+                  @endif
+                </td>
+                <td>
+                  {{$tramitacao_temp->setorOrigem->descricao}}
+                </td>
+                <td>
+                  @if (Auth::user()->id == $tramitacao_temp->userDestino->id)
+                  <strong class="text-warning"><i class="fas fa-hand-point-right"></i> {{$tramitacao_temp->userDestino->name}} </strong>
+                  @else
+                    <i class="fas fa-hand-point-right"></i> {{$tramitacao_temp->userDestino->name}}
+                  @endif
+                </td>
+                <td>
+                  {{$tramitacao_temp->setorDestino->descricao}}
+                </td>
+                @if($tramitacao_temp->recebido == 's')
+                <td>
+                  <h5><span class="badge badge-success"><i class="bi bi-hand-thumbs-up-fill"></i> {{$tramitacao_temp->recebido_em->format('d/m/Y')}}</span></h5>
+                </td>
+                @else
+                <td>
+                  <h5><span class="badge badge-danger"><i class="bi bi-hand-thumbs-down-fill"></i>Não Recebido</span></h5>
+                </td>
+                @endif
+                <td>
+                  <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalTramitacao" data-tramitacao-id="{{ $tramitacao_temp->id}}"><i class="bi bi-eye"></i></button>
+                </td>
+            </tr>    
+            @endforeach                                                
+        </tbody>
+    </table>
+  </div>
+  <div class="container p-2">
+  <p class="text-center">Esse protocolo foi tramitado {{ $protocolo->tramitacaos->count() }} veze(s)</p>    
+</div>
+</div>
+@else
+  <p class="p-3 text-center">Esse protocolo não foi tramitado</p>
+@endif  
+<br>
+
+<div class="container">
+  <div class="container bg-primary text-light">
+    <p class="text-center"><strong>Funcionários com Acesso a esse Protocolo</strong></p>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Funcionário</th>
+                <th scope="col">Setor</th>
+            </tr>
+        </thead>
+        <tbody>
+          @foreach($protocolo->users->sortBy('name') as $user)
+          <tr>
+              <td>{{ $user->name  }}</td>
+              <td>{{ $user->setor->descricao }}</td>
+          </tr>    
+          @endforeach
+        </tbody>
+    </table>
+  </div>
+</div>
+
+@if(($tramitacao->recebido == 's') and ($tramitacao->protocolo->concluido == 'n'))
+<div class="container">
+  <div class="container bg-primary text-light">
+    <p class="text-center"><strong>Opções</strong></p>
+  </div>
+</div>
+<br>
+<div class="container text-center">
+  <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalReabrirTramitacao">
+  <i class="bi bi-folder2-open"></i> Reabrir Tramitação</button>    
+</div>
+@endif
+
+
 <div class="container">
   <div class="float-right">
     <a href="{{ url('/') }}" class="btn btn-secondary" role="button"><i class="bi bi-clipboard-data"></i> Painel de Controle</a>
@@ -308,91 +432,178 @@
 
 
 
-  <!-- Janela para tramitar o protocolo -->
-  <div class="modal fade" id="modalTramitarProtocolo" tabindex="-1" role="dialog" aria-labelledby="JanelaFiltro" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalCenterTitle"><i class="bi bi-arrow-clockwise"></i> Tramitar</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form method="POST" action="{{ route('tramitacoes.store') }}">
-            @csrf
-            <input type="hidden" id="protocolo_id" name="protocolo_id" value="{{ $tramitacao->protocolo->id }}">
-            <input type="hidden" id="tramitacao_id" name="tramitacao_id" value="{{ $tramitacao->id }}">
+<!-- Janela para tramitar o protocolo -->
+<div class="modal fade" id="modalTramitarProtocolo" tabindex="-1" role="dialog" aria-labelledby="JanelaFiltro" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle"><i class="bi bi-arrow-clockwise"></i> Tramitar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{{ route('tramitacoes.store') }}">
+          @csrf
+          <input type="hidden" id="protocolo_id" name="protocolo_id" value="{{ $tramitacao->protocolo->id }}">
+          <input type="hidden" id="tramitacao_id" name="tramitacao_id" value="{{ $tramitacao->id }}">
 
-            <div class="form-group">
-              <label for="funcionario_tramitacao">Funcionário <strong  class="text-danger">(*)</strong></label>
-              <input type="text" class="form-control typeahead" name="funcionario_tramitacao" id="funcionario_tramitacao" autocomplete="off">
-              <input type="hidden" id="funcionario_tramitacao_id" name="funcionario_tramitacao_id">
-              <input type="hidden" id="setor_tramitacao_id" name="setor_tramitacao_id">
+          <div class="form-group">
+            <label for="funcionario_tramitacao">Funcionário <strong  class="text-danger">(*)</strong></label>
+            <input type="text" class="form-control typeahead" name="funcionario_tramitacao" id="funcionario_tramitacao" autocomplete="off">
+            <input type="hidden" id="funcionario_tramitacao_id" name="funcionario_tramitacao_id">
+            <input type="hidden" id="setor_tramitacao_id" name="setor_tramitacao_id">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="funcionario_tramitacao_setor">Setor</label>
+              <input type="text" class="form-control" name="funcionario_tramitacao_setor" id="funcionario_tramitacao_setor" readonly tabIndex="-1" placeholder="">
             </div>
-
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label for="funcionario_tramitacao_setor">Setor</label>
-                <input type="text" class="form-control" name="funcionario_tramitacao_setor" id="funcionario_tramitacao_setor" readonly tabIndex="-1" placeholder="">
-              </div>
-              <div class="form-group col-md-6">
-                <label for="funcionario_tramitacao_email">E-mail</label>
-                <input type="text" class="form-control" name="funcionario_tramitacao_email" id="funcionario_tramitacao_email" readonly tabIndex="-1" placeholder="">
-              </div>
+            <div class="form-group col-md-6">
+              <label for="funcionario_tramitacao_email">E-mail</label>
+              <input type="text" class="form-control" name="funcionario_tramitacao_email" id="funcionario_tramitacao_email" readonly tabIndex="-1" placeholder="">
             </div>
+          </div>
 
-            <div class="form-group">
-              <label for="mensagem">Mensagem <strong class="text-warning">(Opcional)</strong></label>
-              <textarea class="form-control" name="mensagem" rows="3"></textarea> 
-            </div>
+          <div class="form-group">
+            <label for="mensagem">Mensagem <strong class="text-warning">(Opcional)</strong></label>
+            <textarea class="form-control" name="mensagem" rows="3"></textarea> 
+          </div>
 
-            <button type="submit" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i> Tramitar</button>
+          <button type="submit" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i> Tramitar</button>
 
-          </form>  
-        </div>     
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i> Fechar</button>
-        </div>
+        </form>  
+      </div>     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i> Fechar</button>
       </div>
     </div>
   </div>
+</div>
   
 
 
 
-    <!-- Janela para concluir a tramitacao -->
-  <div class="modal fade" id="modalReceberTramitacao" tabindex="-1" role="dialog" aria-labelledby="JanelaFiltro" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title"><i class="bi bi-hand-thumbs-up"></i> Recebimento de Protocolo</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form method="POST" action="{{ route('tramitacoes.update', $tramitacao->id) }}">
-            @csrf
-            @method('PUT')
-            <div class="form-group">
-              <label for="concluido_mensagem">Mensagem de Recebimento: <strong class="text-warning">(Opcional)</strong></label>
-              <textarea class="form-control" name="concluido_mensagem" rows="4"></textarea>      
-            </div>
-            <div class="p-3 alert alert-warning" role="alert">
-              Ao receber essa tramitação não será mais possível anexar arquivos ou fazer outras tramitações desse protocolo.
-            </div>  
-            <div class="form-group">
-              <button type="submit" class="btn btn-primary"><i class="bi bi-hand-thumbs-up"></i> Confirmar Recebimento?</button>
-            </div>
-          </form>
-        </div>     
-        <div class="modal-footer">
-          <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="bi bi-x-square"></i> Cancelar</button>
-        </div>
+<!-- Janela para concluir a tramitacao -->
+<div class="modal fade" id="modalReceberTramitacao" tabindex="-1" role="dialog" aria-labelledby="JanelaFiltro" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-hand-thumbs-up"></i> Recebimento de Protocolo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{{ route('tramitacoes.update', $tramitacao->id) }}">
+          @csrf
+          @method('PUT')
+          <div class="form-group">
+            <label for="concluido_mensagem">Mensagem de Recebimento: <strong class="text-warning">(Opcional)</strong></label>
+            <textarea class="form-control" name="concluido_mensagem" rows="4"></textarea>      
+          </div>
+          <div class="p-3 alert alert-warning" role="alert">
+            Ao receber essa tramitação não será mais possível anexar arquivos ou fazer outras tramitações desse protocolo.
+          </div>  
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-hand-thumbs-up"></i> Confirmar Recebimento?</button>
+          </div>
+        </form>
+      </div>     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="bi bi-x-square"></i> Cancelar</button>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Janela para ver todos dado de uma tramitacao -->
+@if ( !$protocolo->tramitacaos->isEmpty() )
+<div class="modal fade" id="modalTramitacao" tabindex="-1" role="dialog" aria-labelledby="JanelaProfissional" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-eye"></i> Informações da Tramitação</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         <div class="container">
+          <span class="text-center" id="quando_text"></span>  
+        </div>
+        <div class="container bg-info text-white">
+          <div class="row">           
+            <div class="col">
+              <label for="tramitado_para_text"><i class="bi bi-arrow-right"></i> Tramitado para o funcionário:</label>
+              <h5 id="tramitado_para_text"></h5> 
+            </div>
+            <div class="col">
+              <label for="no_setor_text"><i class="bi bi-arrow-right"></i> Do setor:</label>
+              <h5 id="no_setor_text"></h5> 
+            </div>
+          </div>
+        </div>  
+        <div class="container">
+          <div class="row">           
+            <div class="col">
+              <label for="funcionario_origem_text">Funcionário de Origem:</label>
+              <h5 id="funcionario_origem_text"></h5> 
+            </div>
+            <div class="col">
+              <label for="setor_origem_text">Setor de Origem:</label>  
+              <h5 id="setor_origem_text"></h5> 
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <h4 class="p-3 mb-2 bg-primary text-white text-center" id="recebida_text"></h4>
+        </div>
+        <div class="container">
+          <label for="menagem_text">Mensagem Enviada:</label>      
+          <p class=" p-2 mb-2 bg-light text-dark" id="menagem_text"></p>
+        </div>
+        <div class="container">
+          <label for="menagem_recebimento_text">Mensagem de Recebimento:</label>       
+          <p class=" p-2 mb-2 bg-light text-dark" id="menagem_recebimento_text"></p>
+        </div>
+      </div>     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i> Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>  
+@endif
+
+
+@if(($tramitacao->recebido == 's') and ($tramitacao->protocolo->concluido == 'n'))
+<div class="modal fade" id="modalReabrirTramitacao" tabindex="-1" role="dialog" aria-labelledby="janelaReabrirTramitacao" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle"><i class="bi bi-folder2-open"></i> Reabrir Tramitação</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{{route('tramitacoes.reabrir', array($tramitacao->id))}}">
+          @csrf
+          <div class="alert alert-primary" role="alert">
+            <strong>Atenção!</strong> Ao reabrir uma tramitação concluída será apagado a mensagem e data de recebimento. 
+          </div>
+          <button type="submit" class="btn btn-success"><i class="bi bi-question-square"></i> Confirmar</button>
+        </form>
+      </div>     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="bi bi-x-square"></i> Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+@endif
 
 @endsection
 
@@ -421,6 +632,7 @@ var funcionarios = new Bloodhound({
         name: "funcionarios",
                 displayKey: "text",
                 source: funcionarios.ttAdapter(),
+                limit: 7,
                 templates: {
                   empty: [
                     '<div class="empty-message">',
@@ -428,7 +640,7 @@ var funcionarios = new Bloodhound({
                     '</div>'
                   ].join('\n'),
                   suggestion: function(data) {
-                      return '<div class="text-dark"><div>' + data.text + ' - <strong>Setor:</strong> ' + data.setor + '</div></div>';
+                      return '<div class="text-dark"><div>' + data.text + ' - ' + data.setor + '</div></div>';
                     }
                 }
         }).on("typeahead:selected", function(obj, datum, name) {
@@ -449,7 +661,27 @@ var funcionarios = new Bloodhound({
 
     $(function () {
       $('[data-toggle="popover"]').popover()
-    })   
+    })
+
+    $('#modalTramitacao').on('show.bs.modal', function(e) {
+          var tramitacaoid = $(e.relatedTarget).data('tramitacao-id');
+
+          $.ajax({
+            dataType: "json",
+            url: "{{url('/')}}" + "/tramitacoes/json/" + tramitacaoid,
+            type: "GET",
+            success: function(json) {
+                    $("#quando_text").text(json['quando']);
+                    $("#tramitado_para_text").text(json['funcionario_destino']);
+                    $("#no_setor_text").text(json['setor_destino']);
+                    $("#funcionario_origem_text").text(json['funcionario_origem']);
+                    $("#setor_origem_text").text(json['setor_origem']);
+                    $("#recebida_text").text(json['recebido']);
+                    $("#menagem_text").text(json['mensagem']);
+                    $("#menagem_recebimento_text").text(json['mensagemRecebido']);
+            }
+        });
+      });   
 
 });
 </script>

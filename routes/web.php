@@ -72,9 +72,8 @@ Route::resource('/protocolotipos', 'ProtocoloTipoController');
 ## cooncluir um protocolo
 Route::post('/protocolos/concluir/{id}', 'ProtocoloController@concluir')->name('protocolos.concluir');
 ## demais rotas
-Route::get('/protocolos/export/csv', 'ProtocoloController@exportcsv')->name('protocolos.export.csv');
-Route::get('/protocolos/export/pdf', 'ProtocoloController@exportpdf')->name('protocolos.export.pdf');
-Route::get('/protocolos/export/pdf/{id}/individual', 'ProtocoloController@exportpdfindividual')->name('protocolos.export.pdf.individual');
+Route::get('/protocolos/export/pdf/{id}/simples', 'ProtocoloController@exportpdf_simples')->name('protocolos.export.pdf.simples');
+Route::get('/protocolos/export/pdf/{id}/completo', 'ProtocoloController@exportpdf_completo')->name('protocolos.export.pdf.completo');
 Route::post('/protocolos/reabrir/{id}', 'ProtocoloController@reabrir')->name('protocolos.reabrir');
 Route::resource('/protocolos', 'ProtocoloController');
 
@@ -85,6 +84,7 @@ Route::resource('/anexos', 'AnexoController')->only(['store', 'destroy', 'index'
 Route::get('/tramitacoes/export/csv', 'TramitacaoController@exportcsv')->name('tramitacoes.export.csv');
 Route::get('/tramitacoes/export/pdf', 'TramitacaoController@exportpdf')->name('tramitacoes.export.pdf');
 Route::get('/tramitacoes/json/{id}', 'TramitacaoController@show_json')->name('tramitacoes.show.json');
+Route::post('/tramitacoes/reabrir/{id}', 'TramitacaoController@reabrir')->name('tramitacoes.reabrir');
 Route::resource('/tramitacoes', 'TramitacaoController');
 
 /* TRAMITAÇÃO DOS PROTOCOLOS */
