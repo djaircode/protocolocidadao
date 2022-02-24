@@ -49,6 +49,11 @@ class AnexoController extends Controller
         $anexos = new Anexo;
 
         $user = Auth::user();
+
+        if(request()->has('perpage')) {
+            session(['perPage' => request('perpage')]);
+        }
+        
         $lista_anexos_com_acesso = $user->anexos()->pluck('id')->toArray();
         $anexos = $anexos->whereIn('id', $lista_anexos_com_acesso);
         $anexos = $anexos->orderBy('created_at', 'asc');

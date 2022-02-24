@@ -605,7 +605,19 @@ class ProtocoloController extends Controller
             $this->pdf->Ln();    
         }
 
+        $this->pdf->Ln();
+        $this->pdf->Cell(186, 6, utf8_decode('Funcionários com Acesso a esse Protocolo'), 1, 0,'C');
+        $this->pdf->Ln();
+        $this->pdf->Ln();
 
+        $this->pdf->Cell(93, 6, utf8_decode('Funcionário'), 1, 0,'L');
+        $this->pdf->Cell(93, 6, utf8_decode('Setor'), 1, 0,'L');
+        $this->pdf->Ln();
+        foreach($protocolo->users->sortBy('name') as $user){
+            $this->pdf->Cell(93, 6, utf8_decode($user->name), 0, 0,'L');
+            $this->pdf->Cell(93, 6, utf8_decode($user->setor->descricao), 0, 0,'L');
+            $this->pdf->Ln();
+        } 
 
         $this->pdf->Output('D', 'Protocolo_Completo_' . $protocolo->id . '-' . date("Y-m-d H:i:s") . '.pdf', true);
         exit;

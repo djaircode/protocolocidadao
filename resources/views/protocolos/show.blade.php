@@ -25,6 +25,17 @@
           <label for="hora">Hora</label>
           <input type="text" class="form-control" name="hora" value="{{ $protocolo->created_at->format('H:i') }}" readonly>
         </div>
+        <div class="form-group col-md-5 text-right">
+          <div class="btn-group" role="group">
+            <button id="btnGroupDropOptions" type="button" class="btn btn-secondary dropdown-toggle btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="bi bi-printer"></i>Relatórios
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupDropOptions">
+              <a class="dropdown-item" href="{{ route('protocolos.export.pdf.completo', $protocolo->id) }}" id="btnExportarPDF"><i class="bi bi-file-pdf-fill"></i> Exportar PDF Completo</a>
+              <a class="dropdown-item" href="{{ route('protocolos.export.pdf.simples', $protocolo->id) }}" id="btnExportarPDF"><i class="bi bi-file-pdf-fill"></i> Exportar PDF Simples</a>
+            </div>
+          </div>
+        </div>  
       </div>
       <div class="form-row">
         <div class="form-group col-md-6">
