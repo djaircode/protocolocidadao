@@ -104,8 +104,15 @@ class AnexoController extends Controller
 
             foreach ($files as $file) {
 
+                // esses codigos precisam ser únicos dentro da tabela                
                 $codigoAnexoPublico = Str::random(30); // código publico para o link
+                while (!is_null(Anexo::where('codigoAnexoPublico', '=', $codigoAnexoPublico)->first())) {
+                    $codigoAnexoPublico = Str::random(30);
+                }
                 $codigoAnexoSecreto = Str::random(30); // codigo secreto do anexo, nome da pasta onde será salvo o arquivo
+                while (!is_null(Anexo::where('codigoAnexoSecreto', '=', $codigoAnexoSecreto)->first())) {
+                    $codigoAnexoSecreto = Str::random(30);
+                }
 
                 // guarda o nome do arquivo
                 $nome_arquivo = $file->getClientOriginalName();
@@ -202,7 +209,8 @@ class AnexoController extends Controller
             abort(403, 'Acesso negado.');
         }
 
-        // apaga o arquivo, mas mantém a pasta
+        // apaga o arquivo e pasta junto
+        // problema se tiver dois arquivos usando a mesma pasta
         Storage::deleteDirectory('public/' . $anexo->codigoAnexoSecreto);
 
         // apaga todos acessos

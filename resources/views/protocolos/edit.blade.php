@@ -318,6 +318,16 @@
       <p class="text-center"><strong>Tramitações</strong></p>
     </div>
   </div>
+  @if(Session::has('create_protocolotramitacao'))
+  <div class="container">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>Info!</strong>  {{ session('create_protocolotramitacao') }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  @endif
   @if ($protocolo->concluido === 'n')
   <div class="container text-center">
   <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalTramitarProtocolo">
