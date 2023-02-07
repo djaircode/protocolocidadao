@@ -5,8 +5,8 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="jumbotron">
-              <h1 class="display-4"><i class="bi bi-archive"></i> {{ config('app.name', 'Protocolos') }}</h1>
-              <p class="lead">Secretaria Municipal de Saúde</p>
+              <h1 class="display-4"><i class="bi bi-people-fill"></i> Protocolo Cidadão <!-- {{ config('app.name', 'Protocolos') }} --></h1>
+              <p class="lead">Secretaria Municipal de Regulamentação Fundiária</p>
             </div>
         </div>
 
